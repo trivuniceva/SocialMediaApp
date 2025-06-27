@@ -1,0 +1,29 @@
+[
+  {
+    "id": "post_1",
+    "userId": "user_1",
+    "imagePath": "/images/posts/post_1_pic.jpg",
+    "text": "Enjoying nature! Beautiful day for a walk. #nature #walk",
+    "commentIds": ["comment_1"],
+    "creationDate": "2024-06-26T10:30:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_2",
+    "userId": "user_2",
+    "imagePath": null,
+    "text": "Today I learned something new about programming. Fascinating!",
+    "commentIds": [],
+    "creationDate": "2024-06-26T14:00:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_3",
+    "userId": "user_1",
+    "imagePath": "/images/posts/post_3_pic.jpg",
+    "text": "New cake recipe, you must try it!",
+    "commentIds": ["comment_2"],
+    "creationDate": "2024-06-25T18:00:00Z",
+    "logicallyDeleted": false
+  }
+]

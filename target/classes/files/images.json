@@ -1,0 +1,29 @@
+[
+  {
+    "id": "image_1",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_1_landscape.jpg",
+    "text": "Mountain view, breathtaking!",
+    "commentIds": [],
+    "uploadDate": "2024-06-24T12:00:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_2",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_2_sunset.jpg",
+    "text": "Sunset at sea. Perfect end to the day.",
+    "commentIds": [],
+    "uploadDate": "2024-06-24T18:30:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_3",
+    "userId": "user_2",
+    "path": "/images/user_uploads/image_3_city.jpg",
+    "text": "City walk, a moment captured.",
+    "commentIds": [],
+    "uploadDate": "2024-06-25T09:00:00Z",
+    "logicallyDeleted": false
+  }
+]
