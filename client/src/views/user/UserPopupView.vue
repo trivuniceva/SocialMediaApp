@@ -2,22 +2,18 @@
   <div class="user-search">
     <h2>User search</h2>
 
+    <!-- Search form -->
     <div class="search-options">
       <input v-model="searchName" placeholder="Name:" class="rounded-input" />
       <input v-model="searchLastName" placeholder="Lastname:" class="rounded-input" />
-
-      <br><br>
       <label for="startDate">Date of birth from:</label>
       <input type="date" id="startDate" v-model="startDate" class="rounded-input" />
-
-      <br><br>
       <label for="endDate">Date of birth to:</label>
       <input type="date" id="endDate" v-model="endDate" class="rounded-input" />
-
-      <br><br>
       <button @click="searchUsers" class="rounded-button">Search</button>
     </div>
 
+    <!-- Results -->
     <div class="search-results" v-if="filteredUsers.length">
       <h3>Search results</h3>
       <select v-model="sortOption" class="rounded-input">
@@ -27,27 +23,20 @@
       </select>
 
       <ul>
-        <li
-            v-for="user in sortedUsers"
-            :key="user.id"
-            @click="openUserDetails(user)"
-            style="cursor: pointer;"
-        >
+        <li v-for="user in sortedUsers" :key="user.id" @click="openUserDetails(user)">
           {{ user.firstName }} {{ user.lastName }} - {{ user.dateOfBirth }}
         </li>
       </ul>
     </div>
 
-    <p v-else-if="users.length && !filteredUsers.length">No matching users found.</p>
+    <!-- User details modal -->
+    <UserDetailsModal
+        v-if="selectedUser"
+        :user="selectedUser"
+        :current-user="loggedUser"
+        @close="selectedUser = null"
+    />
   </div>
-
-  <UserDetailsModal
-      v-if="showModal"
-      :user="selectedUser"
-      :currentUser="store.state.loggedUser"
-      @close="showModal = false"
-  />
-
 </template>
 
 <script setup>
@@ -55,18 +44,17 @@ import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import UserDetailsModal from "@/components/UserDetailsModal.vue";
 
-
 const store = useStore()
+const loggedUser = computed(() => store.state.loggedUser)
+
 const users = ref([])
 const filteredUsers = ref([])
-const selectedUser = ref(null)
-const showModal = ref(false)
-
 const searchName = ref('')
 const searchLastName = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const sortOption = ref('firstName')
+const selectedUser = ref(null)
 
 const fetchUsers = async () => {
   const response = await fetch('http://172.20.10.4:8080/api/users')
@@ -87,10 +75,7 @@ const searchUsers = () => {
     const start = startDate.value ? new Date(startDate.value) : null
     const end = endDate.value ? new Date(endDate.value) : null
 
-    const matchDate =
-        (!start || dob >= start) &&
-        (!end || dob <= end)
-
+    const matchDate = (!start || dob >= start) && (!end || dob <= end)
     return matchName && matchLastName && matchDate
   })
 }
@@ -110,7 +95,6 @@ const sortedUsers = computed(() => {
 
 const openUserDetails = (user) => {
   selectedUser.value = user
-  showModal.value = true
 }
 
 onMounted(() => {
@@ -118,70 +102,12 @@ onMounted(() => {
 })
 </script>
 
-
 <style scoped>
-.user-search {
-  text-align: center;
-  padding: 20px;
-}
-
-.search-options {
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.rounded-input {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 8px;
-  margin: 6px;
-  width: 100%;
-}
-
-.search-results {
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-h3 {
-  color: #2c3e50;
-}
-
-select {
-  background-color: #2c3e50;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 8px;
-  margin-bottom: 10px;
-  width: 100%;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
 li {
-  margin-bottom: 8px;
-  background-color: #ecf0f1;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.rounded-button {
-  background-color: #2c3e50;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
   cursor: pointer;
-  width: 40%;
-  font-size: 16px;
+  transition: background 0.2s;
 }
-
-.rounded-button:hover {
-  background-color: #F8AFB4;
-  color: #2c3e50;
+li:hover {
+  background-color: #e0e0e0;
 }
 </style>
