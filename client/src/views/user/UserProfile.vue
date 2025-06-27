@@ -37,7 +37,7 @@ import { ref, onMounted } from 'vue'
 const user = ref(null)
 
 onMounted(() => {
-  const userStr = localStorage.getItem('user')
+  const userStr = localStorage.getItem('loggedUser')
   if (userStr) {
     user.value = JSON.parse(userStr)
   }

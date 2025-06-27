@@ -1,8 +1,6 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/login">Login</router-link>
-  </nav>
+
+  <NavbarComponent />
   <router-view/>
 </template>
 
@@ -12,7 +10,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  
+
   color: #2c3e50;
 }
 
@@ -24,8 +22,11 @@ nav {
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #F8AFB4;
     }
   }
 }
 </style>
+<script setup>
+import NavbarComponent from "@/components/NavbarComponent.vue";
+</script>

@@ -4,4 +4,11 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
-createApp(App).use(store).use(router).mount('#app')
+const app = createApp(App)
+
+const userStr = localStorage.getItem('loggedUser')
+if (userStr) {
+    store.commit('setLoggedUser', JSON.parse(userStr))
+}
+
+app.use(store).use(router).mount('#app')
