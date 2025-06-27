@@ -1,0 +1,22 @@
+[
+  {
+    "id": "comment_1",
+    "objectId": "post_1",
+    "objectType": "Post",
+    "userId": "user_2",
+    "text": "Beautiful! Where was this taken?",
+    "commentDate": "2024-06-26T11:00:00Z",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_2",
+    "objectId": "post_3",
+    "objectType": "Post",
+    "userId": "user_4",
+    "text": "Looks great! Can I get the recipe?",
+    "commentDate": "2024-06-25T19:15:00Z",
+    "editDate": "2024-06-25T19:30:00Z",
+    "logicallyDeleted": false
+  }
+]
