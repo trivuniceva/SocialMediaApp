@@ -1,6 +1,6 @@
 <template>
   <div class="user-search">
-    <h2>User search</h2>
+    <h2>User Search</h2>
 
     <div class="search-options">
       <input v-model="searchName" placeholder="Name:" class="rounded-input" />
@@ -27,40 +27,25 @@
       </select>
 
       <ul>
-        <li
-            v-for="user in sortedUsers"
-            :key="user.id"
-            @click="openUserDetails(user)"
-            style="cursor: pointer;"
-        >
-          {{ user.firstName }} {{ user.lastName }} - {{ user.dateOfBirth }}
+        <li v-for="user in sortedUsers" :key="user.id">
+          <router-link :to="`/profile/${user.id}`" class="user-link">
+            {{ user.firstName }} {{ user.lastName }} - {{ user.dateOfBirth }}
+          </router-link>
         </li>
       </ul>
     </div>
 
     <p v-else-if="users.length && !filteredUsers.length">No matching users found.</p>
   </div>
-
-  <UserDetailsModal
-      v-if="showModal"
-      :user="selectedUser"
-      :currentUser="store.state.loggedUser"
-      @close="showModal = false"
-  />
-
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import UserDetailsModal from "@/components/UserDetailsModal.vue";
-
 
 const store = useStore()
 const users = ref([])
 const filteredUsers = ref([])
-const selectedUser = ref(null)
-const showModal = ref(false)
 
 const searchName = ref('')
 const searchLastName = ref('')
@@ -69,7 +54,7 @@ const endDate = ref('')
 const sortOption = ref('firstName')
 
 const fetchUsers = async () => {
-  const response = await fetch('http://172.20.10.4:8080/api/users')
+  const response = await fetch('http://localhost:8080/api/users')
   if (!response.ok) {
     console.error('Ne mogu da učitam korisnike')
     return
@@ -87,9 +72,7 @@ const searchUsers = () => {
     const start = startDate.value ? new Date(startDate.value) : null
     const end = endDate.value ? new Date(endDate.value) : null
 
-    const matchDate =
-        (!start || dob >= start) &&
-        (!end || dob <= end)
+    const matchDate = (!start || dob >= start) && (!end || dob <= end)
 
     return matchName && matchLastName && matchDate
   })
@@ -108,16 +91,10 @@ const sortedUsers = computed(() => {
   })
 })
 
-const openUserDetails = (user) => {
-  selectedUser.value = user
-  showModal.value = true
-}
-
 onMounted(() => {
   fetchUsers()
 })
 </script>
-
 
 <style scoped>
 .user-search {
@@ -167,6 +144,15 @@ li {
   background-color: #ecf0f1;
   padding: 10px;
   border-radius: 5px;
+}
+
+.user-link {
+  text-decoration: none;
+  color: #2c3e50;
+}
+
+.user-link:hover {
+  color: #F8AFB4;
 }
 
 .rounded-button {

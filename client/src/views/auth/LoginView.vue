@@ -42,10 +42,9 @@ const store = useStore()
 const handleLogin = async () => {
   try {
     const user = await loginUser({ username: username.value, password: password.value })
+    console.log("Login success:", user) // proveri da li ima id
     store.commit('setLoggedUser', user)
     localStorage.setItem('loggedUser', JSON.stringify(user))
-    console.log("user")
-    console.log(user)
     router.push('/profile')
   } catch (err) {
     errorMessage.value = 'Pogrešan username ili lozinka'
