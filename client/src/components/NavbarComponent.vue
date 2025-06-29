@@ -12,19 +12,27 @@
       <router-link to="/profile">Profile</router-link> |
       <a href="#" @click.prevent="logout">Logout</a>
     </nav>
+
+    <BackgroundVideo v-if="showVideo" />
   </div>
 </template>
 
+
 <script>
 import { mapState } from 'vuex'
+import BackgroundVideo from "@/views/BackgroundVideo.vue";
 
 export default {
   name: "NavbarComponent",
-
+  components: {
+    BackgroundVideo
+  },
   computed: {
     ...mapState(['loggedUser']),
+    showVideo() {
+      return this.$route.path === '/' || this.$route.path === '/login'
+    }
   },
-
   methods: {
     logout() {
       this.$store.commit('clearLoggedUser')
@@ -34,6 +42,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 a {
