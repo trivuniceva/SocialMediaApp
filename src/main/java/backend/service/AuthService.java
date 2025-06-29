@@ -3,8 +3,10 @@ package backend.service;
 import backend.dto.LoginRequest;
 import backend.dto.UserDTO;
 import backend.model.User;
+import backend.storage.UserFileStorage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -16,56 +18,44 @@ import java.util.List;
 @Service
 public class AuthService {
 
+    @Autowired
+    private UserFileStorage userFileStorage;
+
 
     public ResponseEntity<?> login(LoginRequest loginRequest) {
+
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Resource resource = new ClassPathResource("files/users.json");
-            InputStream is = resource.getInputStream();
+            User user = userFileStorage.findByUsername(loginRequest.getUsername());
 
-            if (is == null) {
-                System.out.println("Ne mogu da učitam users.json fajl!");
-                return ResponseEntity.status(500).body("Fajl sa korisnicima nije pronađen.");
+            if (user == null || user.getPassword() == null || !user.getPassword().equals(loginRequest.getPassword())) {
+                System.out.println("Nema korisnika sa datim kredencijalima ili je lozinka null.");
+                return ResponseEntity.status(401).body("Pogrešan username ili lozinka.");
             }
 
-            System.out.println("InputStream je: " + is);
+            System.out.println("Korisnik pronađen!");
 
-            List<User> users = mapper.readValue(is, new TypeReference<List<User>>() {});
+            UserDTO dto = new UserDTO(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmailAddress(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getDateOfBirth(),
+                    user.getGender(),
+                    user.getRole(),
+                    user.getProfilePicturePath(),
+                    user.getFriendListIds(),
+                    user.getPostIds(),
+                    user.getImageIds(),
+                    user.getFriendRequestsSent(),
+                    user.getFriendRequestsReceived(),
+                    user.isPrivateAccount(),
+                    user.isLogicallyDeleted(),
+                    user.isBlocked()
+            );
 
-            for (User user : users) {
-                System.out.println("Proveravam: " + user.getUsername() + " / " + user.getPassword());
-                if (user.getUsername().equals(loginRequest.getUsername())
-                        && user.getPassword().equals(loginRequest.getPassword())) {
+            return ResponseEntity.ok(dto);
 
-                    System.out.println("Korisnik pronađen!");
-
-                    System.out.println(user.getFriendListIds());
-
-                    UserDTO dto = new UserDTO(
-                            user.getId(),
-                            user.getUsername(),
-                            user.getEmailAddress(),
-                            user.getFirstName(),
-                            user.getLastName(),
-                            user.getDateOfBirth(),
-                            user.getGender(),
-                            user.getRole(),
-                            user.getProfilePicturePath(),
-                            user.getFriendListIds(),
-                            user.getPostIds(),
-                            user.getImageIds(),
-                            user.getFriendRequestsSent(),
-                            user.getFriendRequestsReceived(),
-                            user.isPrivateAccount(),
-                            user.isLogicallyDeleted(),
-                            user.isBlocked()
-                    );
-                    return ResponseEntity.ok(dto);
-                }
-            }
-
-            System.out.println("Nema korisnika sa datim kredencijalima.");
-            return ResponseEntity.status(401).body("Pogrešan username ili lozinka.");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Greška prilikom autentifikacije.");
