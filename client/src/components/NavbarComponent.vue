@@ -30,7 +30,7 @@ export default {
   computed: {
     ...mapState(['loggedUser']),
     showVideo() {
-      return this.$route.path === '/' || this.$route.path === '/login'
+      return this.$route.path === '/' || this.$route.path === '/login' || this.$route.path === '/signup'
     }
   },
   methods: {

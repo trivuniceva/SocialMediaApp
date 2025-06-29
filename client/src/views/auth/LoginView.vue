@@ -84,6 +84,7 @@ const handleLogin = async () => {
   right: 0;
   bottom: 0;
   backdrop-filter: blur(5px);
+  background-color: rgba(44, 62, 80, 0.05);
   z-index: 1;
 }
 

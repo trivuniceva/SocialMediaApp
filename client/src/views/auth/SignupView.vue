@@ -1,6 +1,6 @@
 <template>
   <div class="signup-container">
-    <h2>SignUp</h2>
+    <h2>Sign Up</h2>
     <form @submit.prevent="register" class="signup-form">
       <input type="text" v-model="username" placeholder="Username:" required class="rounded-input" />
       <input type="email" v-model="email" placeholder="Email:" required class="rounded-input" />
@@ -15,26 +15,64 @@
         <input type="radio" id="male" value="male" v-model="gender" required />
       </div>
 
-      <br><br>
       <input type="password" v-model="password" placeholder="Password:" required class="rounded-input" />
       <input type="password" v-model="confirmPassword" placeholder="Confirm password:" required class="rounded-input" />
 
-      <br><br>
-      <button type="submit" class="rounded-button">SignUp</button>
+      <button type="submit" class="rounded-button">Sign Up</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "SignupView"
+  name: "SignupView",
+  data() {
+    return {
+      username: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      gender: '',
+      password: '',
+      confirmPassword: ''
+    }
+  },
+  methods: {
+    register() {
+      console.log("Registracija poslana", this.username);
+    }
+  }
 }
 </script>
 
 <style scoped>
 .signup-container {
+  position: relative;
+  height: 580px;
+  width: 424px;
   text-align: center;
-  padding: 20px;
+  padding-top: 40px;
+  border-radius: 15px;
+  margin: 40px auto;
+  overflow: hidden;
+}
+
+.signup-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+  background-color: rgba(44, 62, 80, 0.05);
+  z-index: 1;
+}
+
+.signup-form,
+.signup-container > h2 {
+  position: relative;
+  z-index: 2;
 }
 
 .signup-form {
@@ -42,33 +80,42 @@ export default {
   margin: 0 auto;
 }
 
-.gender-radio {
-  display: flex;
-  justify-content: space-around;
-  margin: 10px 0;
-}
-
 .rounded-input {
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 8px;
-  margin: 6px 0;
+  margin: 8px 0;
   width: 100%;
 }
 
 .rounded-button {
-  background-color: #2c3e50;
+  background-color: #f86b86;
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 10px;
   cursor: pointer;
+  margin-top: 12px;
   width: 40%;
   font-size: 16px;
 }
 
 .rounded-button:hover {
-  background-color: #F8AFB4;
-  color: #2c3e50;
+  background-color: #f8afb4;
+  color: white;
+}
+
+.gender-radio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  padding: 0 10px;
+  font-weight: bold;
+  color: white;
+}
+
+h2 {
+  color: white;
 }
 </style>
