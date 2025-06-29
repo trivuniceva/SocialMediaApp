@@ -53,9 +53,44 @@ const handleLogin = async () => {
 
 
 <style scoped>
+.container {
+  display: flex;
+}
+
+.left,
+.right {
+  flex: 1;
+  padding: 34px;
+}
+
 .login-container {
+  position: relative;
+  height: 380px;
+  width: 424px;
   text-align: center;
-  padding: 20px;
+  padding-top: 80px;
+  border-radius: 15px;
+  margin: 8px auto;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+  z-index: 1;
+}
+
+.login-form,
+.login-container > h2,
+.login-container > p {
+  position: relative;
+  z-index: 2;
+
 }
 
 .login-form {
@@ -67,28 +102,33 @@ const handleLogin = async () => {
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 8px;
-  margin: 6px 0;
+  margin: 8px 0;
   width: 100%;
 }
 
 .rounded-button {
-  background-color: #2c3e50;
+  background-color: #f86b86;
   color: #fff;
   border: none;
   border-radius: 10px;
   padding: 10px;
   cursor: pointer;
+  margin-top: 12px;
   width: 40%;
   font-size: 16px;
 }
 
 .rounded-button:hover {
-  background-color: #F8AFB4;
-  color: #2c3e50;
+  background-color: #f8afb4;
+  color: white;
 }
 
-.error {
-  color: red;
-  margin-top: 1rem;
+p,
+h2 {
+  color: white;
+}
+
+p {
+  padding-top: 24px;
 }
 </style>
