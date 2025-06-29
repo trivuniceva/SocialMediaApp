@@ -1,49 +1,48 @@
 package backend.service;
 
 import backend.model.User;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import backend.storage.UserFileStorage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.*;
-import java.util.List;
 
 @Service
 public class UserService {
 
-    private final String USERS_FILE_PATH = "src/main/resources/files/users.json";
+    @Autowired
+    private UserFileStorage userFileStorage;
 
     public void updateUserInfo(String id, User updatedUser) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
 
-            // 1. Učitaj sve korisnike
-            File file = new File(USERS_FILE_PATH);
-            List<User> users = mapper.readValue(file, new TypeReference<List<User>>() {});
+        User existingUser = userFileStorage.findById(id);
 
-            // 2. Pronađi i ažuriraj korisnika
-            boolean found = false;
-            for (int i = 0; i < users.size(); i++) {
-                if (users.get(i).getId().equals(id)) {
-                    users.set(i, updatedUser);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                throw new RuntimeException("Korisnik sa id " + id + " nije pronađen.");
-            }
-
-            // 3. Sačuvaj nazad u fajl
-            mapper.writerWithDefaultPrettyPrinter().writeValue(file, users);
-            System.out.println("Korisnik uspešno ažuriran: " + id);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Greška prilikom ažuriranja korisnika: " + e.getMessage());
+        if(existingUser == null){
+            System.out.println("Korisnik nije pronadjen");
+            return;
         }
+
+        updatedUser.setId(existingUser.getId());
+
+        if (updatedUser.getPassword() == null || updatedUser.getPassword().isEmpty()) {
+            updatedUser.setPassword(existingUser.getPassword());
+        }
+
+        if (updatedUser.getUsername() == null) updatedUser.setUsername(existingUser.getUsername());
+        if (updatedUser.getEmailAddress() == null) updatedUser.setEmailAddress(existingUser.getEmailAddress());
+        if (updatedUser.getFirstName() == null) updatedUser.setFirstName(existingUser.getFirstName());
+        if (updatedUser.getLastName() == null) updatedUser.setLastName(existingUser.getLastName());
+        if (updatedUser.getDateOfBirth() == null) updatedUser.setDateOfBirth(existingUser.getDateOfBirth());
+        if (updatedUser.getGender() == null) updatedUser.setGender(existingUser.getGender());
+        if (updatedUser.getRole() == null) updatedUser.setRole(existingUser.getRole());
+        if (updatedUser.getProfilePicturePath() == null) updatedUser.setProfilePicturePath(existingUser.getProfilePicturePath());
+        if (updatedUser.getFriendListIds() == null) updatedUser.setFriendListIds(existingUser.getFriendListIds());
+        if (updatedUser.getPostIds() == null) updatedUser.setPostIds(existingUser.getPostIds());
+        if (updatedUser.getImageIds() == null) updatedUser.setImageIds(existingUser.getImageIds());
+        if (updatedUser.getFriendRequestsSent() == null) updatedUser.setFriendRequestsSent(existingUser.getFriendRequestsSent());
+        if (updatedUser.getFriendRequestsReceived() == null) updatedUser.setFriendRequestsReceived(existingUser.getFriendRequestsReceived());
+
+        updatedUser.setPrivateAccount(updatedUser.isPrivateAccount());
+
+        userFileStorage.updateUser(updatedUser);
+
     }
 }

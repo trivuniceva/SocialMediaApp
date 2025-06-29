@@ -63,5 +63,20 @@ public class UserFileStorage {
                 .orElse(null);
     }
 
+    public User findById(String id) {
+        return users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
 
+    public void updateUser(User updatedUser) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId().equals(updatedUser.getId())) {
+                users.set(i, updatedUser);
+                saveUsers();
+                return;
+            }
+        }
+    }
 }
