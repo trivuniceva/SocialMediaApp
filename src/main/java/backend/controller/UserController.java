@@ -2,23 +2,25 @@ package backend.controller;
 
 
 import backend.model.User;
+import backend.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.InputStream;
 import java.util.List;
 
-@CrossOrigin(origins = "http://172.20.10.4:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api")
 public class UserController {
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
@@ -33,5 +35,16 @@ public class UserController {
             return ResponseEntity.status(500).body("Greška prilikom čitanja korisnika.");
         }
     }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
+        System.out.println("Updating user with id: " + id);
+        System.out.println(updatedUser);
+
+        userService.updateUserInfo(id, updatedUser);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
 }
 

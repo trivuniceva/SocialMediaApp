@@ -5,7 +5,7 @@ import java.util.List;
 public class UserDTO {
     private String id;
     private String username;
-    private String emailAddress;
+    private String email;
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -25,13 +25,13 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(String id, String username, String emailAddress, String firstName, String lastName, String dateOfBirth,
+    public UserDTO(String id, String username, String email, String firstName, String lastName, String dateOfBirth,
                    String gender, String role, String profilePicturePath, List<String> friendListIds,
                    List<String> postIds, List<String> imageIds, List<String> friendRequestsSent,
                    List<String> friendRequestsReceived, boolean privateAccount, boolean logicallyDeleted, boolean blocked) {
         this.id = id;
         this.username = username;
-        this.emailAddress = emailAddress;
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
@@ -66,12 +66,12 @@ public class UserDTO {
         this.username = username;
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFirstName() {

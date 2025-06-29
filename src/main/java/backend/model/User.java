@@ -172,4 +172,27 @@ public class User {
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", gender='" + gender + '\'' +
+                ", role='" + role + '\'' +
+                ", postIds=" + postIds +
+                ", imageIds=" + imageIds +
+                ", friendRequestsSent=" + friendRequestsSent +
+                ", friendRequestsReceived=" + friendRequestsReceived +
+                ", friendListIds=" + friendListIds +
+                ", privateAccount=" + privateAccount +
+                ", logicallyDeleted=" + logicallyDeleted +
+                ", blocked=" + blocked +
+                '}';
+    }
 }

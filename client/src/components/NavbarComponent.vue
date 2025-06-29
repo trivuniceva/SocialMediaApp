@@ -10,6 +10,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/search">Search</router-link> |
       <router-link to="/profile">Profile</router-link> |
+      <router-link to="/edit-profile">Edit Profile</router-link> |
       <a href="#" @click.prevent="logout">Logout</a>
     </nav>
 
