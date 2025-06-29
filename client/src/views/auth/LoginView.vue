@@ -44,6 +44,8 @@ const handleLogin = async () => {
     const user = await loginUser({ username: username.value, password: password.value })
     store.commit('setLoggedUser', user)
     localStorage.setItem('loggedUser', JSON.stringify(user))
+    console.log("user")
+    console.log(user)
     router.push('/profile')
   } catch (err) {
     errorMessage.value = 'Pogrešan username ili lozinka'

@@ -9,7 +9,7 @@
     "dateOfBirth": "1990-05-15",
     "gender": "Male",
     "role": "User",
-    "profilePicturePath": "/images/profile/petar_p.jpg",
+    "profilePicturePath": "http://localhost:8080/images/profile/macko.jpg",
     "postIds": ["post_1", "post_3"],
     "imageIds": ["image_1", "image_2"],
     "friendRequestsSent": ["user_3"],

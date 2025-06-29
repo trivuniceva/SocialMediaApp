@@ -39,12 +39,26 @@ public class AuthService {
 
                     System.out.println("Korisnik pronađen!");
 
+                    System.out.println(user.getFriendListIds());
+
                     UserDTO dto = new UserDTO(
                             user.getId(),
+                            user.getUsername(),
                             user.getEmailAddress(),
                             user.getFirstName(),
                             user.getLastName(),
-                            user.getRole()
+                            user.getDateOfBirth(),
+                            user.getGender(),
+                            user.getRole(),
+                            user.getProfilePicturePath(),
+                            user.getFriendListIds(),
+                            user.getPostIds(),
+                            user.getImageIds(),
+                            user.getFriendRequestsSent(),
+                            user.getFriendRequestsReceived(),
+                            user.isPrivateAccount(),
+                            user.isLogicallyDeleted(),
+                            user.isBlocked()
                     );
                     return ResponseEntity.ok(dto);
                 }

@@ -6,7 +6,7 @@
         <h3>
           <span>{{ user.username }}</span>
           <router-link to="#" @click.prevent="togglePopup">
-            <strong class="followers-link" style="margin-left: 24px">{{ user.followers?.length || 0 }} followers</strong>
+            <strong class="followers-link" style="margin-left: 24px">{{ user.friendListIds?.length || 0 }} followers</strong>
           </router-link>
         </h3>
         <p>{{ user.firstName }} {{ user.lastName }}</p>
@@ -49,12 +49,13 @@
     <div v-if="isPopupOpen" class="popup-overlay" @click.self="togglePopup">
       <div class="popup-window">
         <button class="closeBtn" @click="togglePopup">
-          <img style="width: 16px" src="img/icons/closeIcon.png">
+<!--          <img style="width: 16px" src="img/icons/closeIcon.png">-->
+          <p>X</p>
         </button>
         <h3><strong>Followers</strong></h3>
         <div class="follower-list-container">
           <ul>
-            <li v-for="(follower, index) in user.followers || []" :key="index">
+            <li v-for="(follower, index) in user.friendListIds || []" :key="index">
               <button>Remove</button>
             </li>
           </ul>
@@ -70,6 +71,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import User from '@/models/User'
 
 const user = ref(null)
 const isPopupOpen = ref(false)
@@ -90,10 +92,11 @@ function togglePopupPost(post) {
 onMounted(() => {
   const userStr = localStorage.getItem('loggedUser')
   if (userStr) {
-    user.value = JSON.parse(userStr)
+    user.value = new User(JSON.parse(userStr))
   }
 })
 </script>
+
 
 <style scoped>
 .popup-overlay {

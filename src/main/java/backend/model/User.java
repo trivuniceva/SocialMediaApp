@@ -2,6 +2,8 @@ package backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private String id;
@@ -10,10 +12,22 @@ public class User {
     private String emailAddress;
     private String firstName;
     private String lastName;
+    private String dateOfBirth;
+    private String gender;
     private String role;
+    private String profilePicturePath;
+
+    private List<String> postIds;
+    private List<String> imageIds;
+    private List<String> friendRequestsSent;
+    private List<String> friendRequestsReceived;
+    private List<String> friendListIds;
+
+    private boolean privateAccount;
+    private boolean logicallyDeleted;
+    private boolean blocked;
 
     public User() {}
-
 
     public String getId() {
         return id;
@@ -63,11 +77,99 @@ public class User {
         this.lastName = lastName;
     }
 
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
+    }
+
+    public List<String> getPostIds() {
+        return postIds;
+    }
+
+    public void setPostIds(List<String> postIds) {
+        this.postIds = postIds;
+    }
+
+    public List<String> getImageIds() {
+        return imageIds;
+    }
+
+    public void setImageIds(List<String> imageIds) {
+        this.imageIds = imageIds;
+    }
+
+    public List<String> getFriendRequestsSent() {
+        return friendRequestsSent;
+    }
+
+    public void setFriendRequestsSent(List<String> friendRequestsSent) {
+        this.friendRequestsSent = friendRequestsSent;
+    }
+
+    public List<String> getFriendRequestsReceived() {
+        return friendRequestsReceived;
+    }
+
+    public void setFriendRequestsReceived(List<String> friendRequestsReceived) {
+        this.friendRequestsReceived = friendRequestsReceived;
+    }
+
+    public List<String> getFriendListIds() {
+        return friendListIds;
+    }
+
+    public void setFriendListIds(List<String> friendListIds) {
+        this.friendListIds = friendListIds;
+    }
+
+    public boolean isPrivateAccount() {
+        return privateAccount;
+    }
+
+    public void setPrivateAccount(boolean privateAccount) {
+        this.privateAccount = privateAccount;
+    }
+
+    public boolean isLogicallyDeleted() {
+        return logicallyDeleted;
+    }
+
+    public void setLogicallyDeleted(boolean logicallyDeleted) {
+        this.logicallyDeleted = logicallyDeleted;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 }
