@@ -2,28 +2,73 @@
   {
     "id": "image_1",
     "userId": "user_1",
-    "path": "/images/user_uploads/image_1_landscape.jpg",
+    "path": "/images/user_uploads/image_1.jpg",
     "text": "Mountain view, breathtaking!",
     "commentIds": [],
-    "uploadDate": "2024-06-24T12:00:00Z",
+    "uploadDate": "2024-06-24T12:00:00",
     "logicallyDeleted": false
   },
   {
     "id": "image_2",
     "userId": "user_1",
-    "path": "/images/user_uploads/image_2_sunset.jpg",
+    "path": "/images/user_uploads/image_2.jpg",
     "text": "Sunset at sea. Perfect end to the day.",
     "commentIds": [],
-    "uploadDate": "2024-06-24T18:30:00Z",
+    "uploadDate": "2024-06-24T18:30:00",
     "logicallyDeleted": false
   },
   {
     "id": "image_3",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_3.jpg",
+    "text": "Lost in the green.",
+    "commentIds": [],
+    "uploadDate": "2024-06-25T10:15:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_4",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_4.jpg",
+    "text": "Still waters, clear reflections.",
+    "commentIds": [],
+    "uploadDate": "2024-06-26T08:45:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_5",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_5.jpg",
+    "text": "Hiking through the wild.",
+    "commentIds": [],
+    "uploadDate": "2024-06-26T14:00:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_6",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_6.jpg",
+    "text": "Morning coffee, best ritual.",
+    "commentIds": [],
+    "uploadDate": "2024-06-27T07:30:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_7",
+    "userId": "user_1",
+    "path": "/images/user_uploads/image_7.jpg",
+    "text": "Weekend reads and peace.",
+    "commentIds": [],
+    "uploadDate": "2024-06-27T11:20:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_8",
     "userId": "user_2",
-    "path": "/images/user_uploads/image_3_city.jpg",
+    "path": "/images/user_uploads/image_8.jpg",
     "text": "City walk, a moment captured.",
     "commentIds": [],
-    "uploadDate": "2024-06-25T09:00:00Z",
+    "uploadDate": "2024-06-25T09:00:00",
     "logicallyDeleted": false
   }
 ]
