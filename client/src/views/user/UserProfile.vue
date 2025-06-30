@@ -5,16 +5,32 @@
       <div class="profile-info">
         <div class="profile-username">
           <h3>{{ user.username }}</h3>
-          <router-link to="#" @click.prevent="togglePopup" class="followers-link">
-            <strong>{{ user.friendListIds?.length || 0 }} Followers</strong>
-          </router-link>
 
           <template v-if="loggedUser && user.id === loggedUser.id">
+            <router-link to="#" @click.prevent="togglePopup" class="followers-link">
+              <strong>{{ user.friendListIds?.length || 0 }} Followers</strong>
+            </router-link>
             <router-link to="#" @click.prevent="toggleFriendRequestsPopup" class="followers-link">
               <strong>{{ pendingRequests.length }} Friend Requests</strong>
             </router-link>
           </template>
-          
+
+          <div v-else-if="loggedUser && user.id !== loggedUser.id" class="friend-action-section">
+            <button v-if="!isFriend(user.id) && !hasSentRequest(user.id) && !hasReceivedRequest(user.id)"
+                    @click="sendFriendRequest(user.id)"
+                    class="add-friend-button">
+              Add Friend
+            </button>
+            <span v-else-if="hasSentRequest(user.id)" class="pending-request-message">
+              Request Sent
+            </span>
+            <button v-else-if="hasReceivedRequest(user.id)"
+                    @click="acceptFriendRequest(user.id)"
+                    class="accept-friend-button">
+              Accept Request
+            </button>
+          </div>
+
         </div>
         <p class="full-name">{{ user.firstName }} {{ user.lastName }}</p>
         <p class="dob">{{ user.dateOfBirth }}</p>
@@ -30,14 +46,12 @@
             :class="{ active: selectedSection === 'pictures' }"
             @click="selectedSection = 'pictures'"
         >Pictures</button>
-
         <button
             class="tab-button"
             :class="{ active: selectedSection === 'posts' }"
             @click="selectedSection = 'posts'"
         >Posts</button>
       </div>
-
       <UserPictures v-if="selectedSection === 'pictures'" :userId="user.id" />
       <UserPosts v-else :userId="user.id" />
     </div>
@@ -70,14 +84,14 @@
     </div>
 
     <FollowersPopup
-        v-if="isPopupOpen"
+        v-if="isPopupOpen && loggedUser && user.id === loggedUser.id"
         :followers="user.friendListIds || []"
         :close="togglePopup"
         @remove="handleRemoveFriend"
     />
 
     <FriendRequestsPopup
-        v-if="isFriendRequestsPopupOpen"
+        v-if="isFriendRequestsPopupOpen && loggedUser && user.id === loggedUser.id"
         :requests="pendingRequests"
         @close="toggleFriendRequestsPopup"
         @accept="handleAcceptRequest"
@@ -102,37 +116,45 @@ import FriendRequestsPopup from "@/components/FriendRequestsPopup.vue"
 const store = useStore()
 const route = useRoute()
 const user = ref(null)
-const friendRequests = ref([])
+const friendRequestsReceived = ref([]) // Renamed for clarity: requests this user received
+const friendRequestsSent = ref([]) // NEW: ref for requests this user sent
 const errorMessage = ref('')
 
 const loggedUser = computed(() => store.state.loggedUser)
 
+// NEW: Computed properties to check friendship status
+const isFriend = (userId) => {
+  return loggedUser.value?.friendListIds?.includes(userId)
+}
+
+const hasSentRequest = (userId) => {
+  // Checks if logged user sent a pending request to this profile user
+  return friendRequestsSent.value.some(req => req.receiverId === userId && req.status === 'pending')
+}
+
+const hasReceivedRequest = (userId) => {
+  // Checks if this profile user sent a pending request to logged user
+  return friendRequestsReceived.value.some(req => req.senderId === userId && req.status === 'pending')
+}
+
 const canViewContent = computed(() => {
   if (!user.value) return false
-
   if (!user.value.privateAccount) return true
-
   if (loggedUser.value && loggedUser.value.id === user.value.id) return true
-
-  if (
-      loggedUser.value &&
-      user.value.friendListIds &&
-      user.value.friendListIds.includes(loggedUser.value.id)
-  ) {
+  if (loggedUser.value && user.value.friendListIds && user.value.friendListIds.includes(loggedUser.value.id)) {
     return true
   }
-
   return false
 })
 
 const pendingRequests = computed(() =>
-    friendRequests.value.filter(
+    friendRequestsReceived.value.filter(
         req => req.receiverId === user.value?.id && req.status === 'pending'
     )
 )
 
+// Modified fetchUserData to also fetch sent requests for the logged user
 async function fetchUserData(id) {
-  // Ako je ID nedefinisan i nema logovanog korisnika, ne radimo ništa
   if (!id) {
     errorMessage.value = 'Korisnik nije pronađen';
     user.value = null;
@@ -149,12 +171,24 @@ async function fetchUserData(id) {
     user.value = await response.json()
     errorMessage.value = '';
 
-    const requestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${id}`);
-    if (requestsResponse.ok) {
-      friendRequests.value = await requestsResponse.json();
+    // Fetch received friend requests for the profile user
+    const receivedRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${id}`);
+    if (receivedRequestsResponse.ok) {
+      friendRequestsReceived.value = await receivedRequestsResponse.json();
     } else {
-      console.error('Failed to load friend requests', requestsResponse.status);
+      console.error('Failed to load received friend requests', receivedRequestsResponse.status);
     }
+
+    // NEW: Fetch sent friend requests for the logged-in user if they exist
+    if (loggedUser.value) {
+      const sentRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/sent/${loggedUser.value.id}`);
+      if (sentRequestsResponse.ok) {
+        friendRequestsSent.value = await sentRequestsResponse.json();
+      } else {
+        console.error('Failed to load sent friend requests', sentRequestsResponse.status);
+      }
+    }
+
   } catch (error) {
     errorMessage.value = 'Greška prilikom učitavanja korisnika'
     user.value = null;
@@ -162,24 +196,16 @@ async function fetchUserData(id) {
   }
 }
 
-// Inicijalno učitavanje profila
 onMounted(async () => {
-  // Prvo učitajte profil na osnovu ID-a iz rute.
-  // Ako ga nema, probajte ID ulogovanog korisnika.
   const id = route.params.id || store.state.loggedUser?.id;
   await fetchUserData(id);
 })
 
-// Prati promene u parametru rute
 watch(() => route.params.id, async (newId) => {
-  // Odredite ID koji treba da se učita. Ako je `newId` undefined, koristite ID ulogovanog korisnika.
   const idToFetch = newId || store.state.loggedUser?.id;
-
-  // Proverite da li već prikazujemo isti profil da biste izbegli nepotrebno učitavanje
   if (user.value?.id === idToFetch) {
     return;
   }
-
   await fetchUserData(idToFetch);
 });
 
@@ -205,16 +231,57 @@ function toggleFriendRequestsPopup() {
   isFriendRequestsPopupOpen.value = !isFriendRequestsPopupOpen.value
 }
 
+// NEW: Function to send a friend request
+async function sendFriendRequest(receiverId) {
+  if (!loggedUser.value) return; // Must be logged in
+  try {
+    const response = await fetch('http://localhost:8080/api/friend-requests/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ senderId: loggedUser.value.id, receiverId: receiverId, status: 'pending' })
+    });
+    if (response.ok) {
+      const newRequest = await response.json();
+      friendRequestsSent.value.push(newRequest); // Add the new request to the list
+      console.log('Friend request sent!', newRequest);
+    } else {
+      console.error('Failed to send friend request', response.status);
+    }
+  } catch (error) {
+    console.error('Error sending friend request:', error);
+  }
+}
+
+// NEW: Function to accept a friend request from the other user's profile
+async function acceptFriendRequest(senderId) {
+  // Find the request
+  const requestToAccept = friendRequestsReceived.value.find(
+      req => req.senderId === senderId && req.receiverId === loggedUser.value.id && req.status === 'pending'
+  );
+  if (!requestToAccept) return;
+
+  await handleAcceptRequest(requestToAccept.id);
+
+  // Update friend lists to reflect the new friendship
+  if (loggedUser.value) {
+    loggedUser.value.friendListIds.push(senderId); // Add sender to logged user's friend list
+    store.commit('setLoggedUser', loggedUser.value); // Update Vuex store
+  }
+  if (user.value) {
+    user.value.friendListIds.push(loggedUser.value.id); // Add logged user to profile user's friend list
+  }
+}
+
 async function handleAcceptRequest(requestId) {
   await fetch(`http://localhost:8080/api/friend-requests/accept/${requestId}`, { method: 'POST' })
-  friendRequests.value = friendRequests.value.map(req =>
+  friendRequestsReceived.value = friendRequestsReceived.value.map(req =>
       req.id === requestId ? { ...req, status: 'accepted' } : req
   )
 }
 
 async function handleRejectRequest(requestId) {
   await fetch(`http://localhost:8080/api/friend-requests/reject/${requestId}`, { method: 'POST' })
-  friendRequests.value = friendRequests.value.map(req =>
+  friendRequestsReceived.value = friendRequestsReceived.value.map(req =>
       req.id === requestId ? { ...req, status: 'rejected' } : req
   )
 }
@@ -712,5 +779,40 @@ h3 {
   .user-info-section p {
     font-size: 1em;
   }
+}
+
+.friend-action-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.add-friend-button,
+.accept-friend-button {
+  background-color: #f86b86; /* Same as the pink theme */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-friend-button:hover,
+.accept-friend-button:hover {
+  background-color: #e05a73;
+  transform: translateY(-1px);
+}
+
+.pending-request-message {
+  color: #777; /* Greyed out text */
+  font-weight: 600;
+  font-size: 0.95em;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
 }
 </style>
