@@ -174,4 +174,12 @@
   "commentIds" : [ ],
   "uploadDate" : "2024-06-28T19:25:00",
   "logicallyDeleted" : false
+}, {
+  "id" : "3504b742-f89c-4a89-9824-26d6ace1f3ba",
+  "userId" : "user_4",
+  "path" : "/images/user_uploads/test1.jpg",
+  "text" : "Opis",
+  "commentIds" : [ ],
+  "uploadDate" : "2025-07-01T01:09:06.225562",
+  "logicallyDeleted" : false
 } ]

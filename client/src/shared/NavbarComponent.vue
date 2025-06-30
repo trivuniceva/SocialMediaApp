@@ -11,7 +11,9 @@
       <router-link to="/search">Search</router-link> |
       <router-link to="/profile">Profile</router-link> |
       <router-link to="/edit-profile">Edit Profile</router-link> |
+      <router-link to="/add-image">Add Image</router-link> |
       <a href="#" @click.prevent="logout">Logout</a>
+
     </nav>
 
     <BackgroundVideo v-if="showVideo" />
