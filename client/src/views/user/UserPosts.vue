@@ -1,5 +1,5 @@
 <template>
-  <div class="user-posts">
+  <div class="user-posts-container">
     <div v-if="postsWithImages.length > 0" class="post-list">
       <div
           v-for="post in postsWithImages"
@@ -11,6 +11,7 @@
             v-if="isValidImagePath(post.imagePath)"
             :src="post.imagePath"
             class="post-image"
+            alt="Post image"
         />
 
         <div class="post-content">
@@ -19,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="no-posts-message">
       <p>No posts to display.</p>
     </div>
 
@@ -34,6 +35,7 @@
             v-if="isValidImagePath(currentPost?.imagePath)"
             :src="currentPost.imagePath"
             :alt="currentPost.text"
+            class="popup-image"
         />
         <p class="popup-text">{{ currentPost.text }}</p>
         <p class="popup-date">
@@ -90,21 +92,17 @@ const formatDate = (dateString) => {
   })
 }
 
-// Nova funkcija za proveru validnosti putanje slike
 const isValidImagePath = (path) => {
   return path && path.trim() !== '' && !path.endsWith('null') && !path.includes('undefined');
 }
 
 const postsWithImages = computed(() =>
-    // Filtriramo postove u computed propertiju samo za prikaz,
-    // ali za uslov u template-u koristimo isValidImagePath
     posts.value
 )
 </script>
 
 <style scoped>
-/* Vaš postojeći CSS kod */
-.user-posts {
+.user-posts-container {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -120,16 +118,18 @@ const postsWithImages = computed(() =>
 }
 
 .post-card {
-  background-color: #ffffff;
+  background-color: #fcfcfc; /* Vrlo blaga, skoro bela pozadina */
+  border: 1px solid #eee; /* Suptilan border */
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Nešto jača, ali i dalje suptilna senka */
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .post-card:hover {
-  transform: scale(1.01);
+  transform: translateY(-3px); /* Malo se podigne */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); /* Senka postane izraženija */
 }
 
 .post-image {
@@ -137,7 +137,7 @@ const postsWithImages = computed(() =>
   max-height: 400px;
   object-fit: cover;
   border-radius: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Povećan razmak ispod slike */
 }
 
 .post-content {
@@ -148,11 +148,19 @@ const postsWithImages = computed(() =>
   font-size: 1.1rem;
   color: #2c3e50;
   margin-bottom: 8px;
+  line-height: 1.5; /* Poboljšana čitljivost teksta */
 }
 
 .post-date {
   font-size: 0.85rem;
   color: #777;
+}
+
+.no-posts-message {
+  padding: 20px;
+  font-size: 1.1em;
+  color: #777;
+  text-align: center;
 }
 
 .post-popup-overlay {
@@ -163,50 +171,96 @@ const postsWithImages = computed(() =>
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .post-popup-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 15px;
-  width: 60%;
-  max-height: 80%;
+  background-color: #ffffff; /* Bela pozadina popupa */
+  padding: 30px; /* Povećan padding */
+  border-radius: 18px; /* Veći border-radius */
+  width: 65%; /* Malo širi popup */
+  max-width: 700px; /* Maksimalna širina */
+  max-height: 85%; /* Malo veća visina */
   overflow-y: auto;
   text-align: center;
   position: relative;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); /* Jača senka */
+  color: #2c3e50;
 }
 
-.post-popup-content img {
+.popup-image {
   max-width: 100%;
-  border-radius: 10px;
-  margin-bottom: 15px;
+  max-height: 500px; /* Ograniči visinu slike u popupu */
+  object-fit: contain; /* Sliku smesti unutar okvira */
+  border-radius: 12px;
+  margin-bottom: 20px; /* Povećan razmak */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .popup-text {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
+  font-size: 1.25rem; /* Malo veći font */
+  margin-bottom: 10px;
+  font-weight: 500;
+  line-height: 1.6;
 }
 
 .popup-date {
   color: #777;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
 }
 
 .popup-comments {
   color: #2c3e50;
   margin-top: 10px;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .close-btn {
   position: absolute;
-  top: 10px; right: 10px;
+  top: 15px; /* Povećan razmak */
+  right: 15px; /* Povećan razmak */
   background-color: #f86b86;
   border: none;
   color: white;
   border-radius: 50%;
-  width: 30px; height: 30px;
-  font-size: 1rem;
+  width: 34px; /* Veće dugme */
+  height: 34px; /* Veće dugme */
+  font-size: 1.1rem;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn:hover {
+  background-color: #e05a73;
+  transform: translateY(-1px);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .post-card {
+    padding: 12px;
+  }
+
+  .post-text {
+    font-size: 1rem;
+  }
+
+  .post-popup-content {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .popup-text {
+    font-size: 1.1rem;
+  }
+
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
 }
 </style>
