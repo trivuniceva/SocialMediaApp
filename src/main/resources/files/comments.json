@@ -1,22 +1,112 @@
 [
   {
     "id": "comment_1",
-    "objectId": "post_1",
-    "objectType": "Post",
-    "userId": "user_2",
-    "text": "Beautiful! Where was this taken?",
-    "commentDate": "2024-06-26T11:00:00Z",
+    "objectId": "image_1",
+    "objectType": "IMAGE",
+    "userId": "user_3",
+    "text": "Wow, this view is breathtaking! I love the light.",
+    "commentDate": "2024-06-25T09:15:00",
     "editDate": null,
     "logicallyDeleted": false
   },
   {
     "id": "comment_2",
-    "objectId": "post_3",
-    "objectType": "Post",
+    "objectId": "image_1",
+    "objectType": "IMAGE",
+    "userId": "user_2",
+    "text": "Absolutely stunning! Wish I was there.",
+    "commentDate": "2024-06-25T11:30:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_3",
+    "objectId": "image_2",
+    "objectType": "IMAGE",
     "userId": "user_4",
-    "text": "Looks great! Can I get the recipe?",
-    "commentDate": "2024-06-25T19:15:00Z",
-    "editDate": "2024-06-25T19:30:00Z",
+    "text": "Such a peaceful photo. The colors are beautiful.",
+    "commentDate": "2024-06-26T09:00:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_4",
+    "objectId": "image_3",
+    "objectType": "IMAGE",
+    "userId": "user_2",
+    "text": "So much green! I feel relaxed just looking at it.",
+    "commentDate": "2024-06-26T12:45:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_5",
+    "objectId": "image_4",
+    "objectType": "IMAGE",
+    "userId": "user_3",
+    "text": "Amazing reflection! Great capture.",
+    "commentDate": "2024-06-27T09:20:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_6",
+    "objectId": "image_7",
+    "objectType": "IMAGE",
+    "userId": "user_1",
+    "text": "Love this cozy vibe! What book is that?",
+    "commentDate": "2024-06-27T14:00:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_7",
+    "objectId": "image_7",
+    "objectType": "IMAGE",
+    "userId": "user_4",
+    "text": "Perfect weekend plans!",
+    "commentDate": "2024-06-28T10:00:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_8",
+    "objectId": "image_8",
+    "objectType": "IMAGE",
+    "userId": "user_1",
+    "text": "Awesome street photo!",
+    "commentDate": "2024-06-26T11:00:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_9",
+    "objectId": "image_12",
+    "objectType": "IMAGE",
+    "userId": "user_3",
+    "text": "Looks like a fun ride! Great shot!",
+    "commentDate": "2024-06-29T10:00:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_10",
+    "objectId": "image_13",
+    "objectType": "IMAGE",
+    "userId": "user_1",
+    "text": "This reminds me of a film scene.",
+    "commentDate": "2024-06-29T12:00:00",
+    "editDate": null,
+    "logicallyDeleted": false
+  },
+  {
+    "id": "comment_11",
+    "objectId": "image_14",
+    "objectType": "IMAGE",
+    "userId": "user_4",
+    "text": "Beautifully edited. Love the tones.",
+    "commentDate": "2024-06-30T09:00:00",
+    "editDate": null,
     "logicallyDeleted": false
   }
 ]
