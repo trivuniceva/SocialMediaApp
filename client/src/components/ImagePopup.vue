@@ -27,6 +27,13 @@
               <div class="comment-header">
                 <img :src="getCommenterProfilePic(comment.userId)" alt="User Avatar" class="comment-avatar">
                 <span class="comment-username">{{ comment.username }}:</span>
+                <button
+                    v-if="canDeleteComment(comment)"
+                    @click="deleteComment(comment.id)"
+                    class="delete-comment-btn"
+                >
+                  Delete
+                </button>
               </div>
               <span class="comment-text">{{ comment.text }}</span>
             </div>
@@ -72,7 +79,7 @@ const store = useStore();
 
 const comments = ref([]);
 const newCommentText = ref('');
-const uploaderProfilePic = ref('/img/icons/profile-placeholder.png');
+const uploaderProfilePic = ref('');
 const commenterProfilePics = ref({});
 
 const loggedUser = computed(() => store.state.loggedUser);
@@ -102,13 +109,13 @@ const fetchCommentsAndUserData = async (objectId) => {
       const uploaderResponse = await axios.get(`http://localhost:8080/api/users/${props.image.userId}`);
       uploaderProfilePic.value = uploaderResponse.data.profilePicturePath;
     } else {
-      uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
+      uploaderProfilePic.value = '';
     }
 
   } catch (error) {
     console.error('Greška pri učitavanju podataka:', error);
     comments.value = [];
-    uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
+    uploaderProfilePic.value = '';
     commenterProfilePics.value = {};
   }
 };
@@ -154,8 +161,36 @@ const postComment = async () => {
   }
 };
 
+const canDeleteComment = (comment) => {
+  if (!loggedUser.value) {
+    return false; // Nije ulogovan, ne može ništa brisati
+  }
+  // Korisnik je ulogovan i...
+  // ...ili je autor komentara
+  const isAuthor = comment.userId === loggedUser.value.id;
+  // ...ili je vlasnik objave (slike)
+  const isPostOwner = props.image.userId === loggedUser.value.id;
+
+  return isAuthor || isPostOwner;
+};
+
+const deleteComment = async (commentId) => {
+  if (!confirm('Are you sure you want to delete this comment?')) {
+    return;
+  }
+  try {
+    await axios.delete(`http://localhost:8080/api/comments/${commentId}`);
+
+    comments.value = comments.value.filter(comment => comment.id !== commentId);
+
+    console.log(`Comment with ID ${commentId} has been deleted.`);
+  } catch (error) {
+    console.error(`Greška pri brisanju komentara sa ID ${commentId}:`, error);
+  }
+};
+
 const getCommenterProfilePic = (userId) => {
-  return commenterProfilePics.value[userId] || '/img/icons/profile-placeholder.png';
+  return commenterProfilePics.value[userId] || '';
 };
 
 watch(() => props.image?.id, (newId) => {
@@ -169,7 +204,7 @@ watch(() => props.isVisible, (newVal) => {
     fetchCommentsAndUserData(props.image.id);
   } else if (!newVal) {
     comments.value = [];
-    uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
+    uploaderProfilePic.value = '';
     commenterProfilePics.value = {};
   }
 });
@@ -188,6 +223,7 @@ const formatUploadDate = (dateString) => {
 </script>
 
 <style scoped>
+/* Vaši postojeći stilovi ostaju isti */
 .image-popup-overlay {
   position: fixed;
   top: 0;
@@ -249,12 +285,12 @@ const formatUploadDate = (dateString) => {
   padding: 5px;
   border-radius: 50%;
   transition: background-color 0.2s ease;
-  z-index: 1; /* Povećaj z-index da bude iznad svega */
-  font-size: 1.2em; /* Povećaj veličinu X */
+  z-index: 1;
+  font-size: 1.2em;
 }
 
 .close-popup-btn:hover {
-  color: #f86b86; /* Promeni boju X na hover */
+  color: #f86b86;
 }
 
 .post-header {
@@ -421,6 +457,25 @@ const formatUploadDate = (dateString) => {
 
 .comments-section::-webkit-scrollbar-thumb:hover {
   background: #bbb;
+}
+
+.delete-comment-btn {
+  background: none;
+  border: none;
+  color: #dc3545; /* Crvena boja za brisanje */
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-left: auto; /* Gura dugme skroz desno */
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.delete-comment-btn:hover {
+  opacity: 1;
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
 @media (max-width: 992px) {

@@ -6,7 +6,7 @@
   "text" : "Wow, this view is breathtaking! I love the light.",
   "commentDate" : [ 2024, 6, 25, 9, 15 ],
   "editDate" : null,
-  "logicallyDeleted" : false
+  "logicallyDeleted" : true
 }, {
   "id" : "comment_2",
   "objectId" : "image_1",
@@ -15,7 +15,7 @@
   "text" : "Absolutely stunning! Wish I was there.",
   "commentDate" : [ 2024, 6, 25, 11, 30 ],
   "editDate" : null,
-  "logicallyDeleted" : false
+  "logicallyDeleted" : true
 }, {
   "id" : "comment_3",
   "objectId" : "image_2",
@@ -87,7 +87,7 @@
   "text" : "This reminds me of a film scene.",
   "commentDate" : [ 2024, 6, 29, 12, 0 ],
   "editDate" : null,
-  "logicallyDeleted" : false
+  "logicallyDeleted" : true
 }, {
   "id" : "comment_11",
   "objectId" : "image_14",
@@ -123,7 +123,7 @@
   "text" : "<3",
   "commentDate" : [ 2025, 6, 30, 22, 5, 43, 908000000 ],
   "editDate" : null,
-  "logicallyDeleted" : false
+  "logicallyDeleted" : true
 }, {
   "id" : "32a03cb2-7fe1-469c-a311-1e99017d975b",
   "objectId" : "image_13",
@@ -133,4 +133,13 @@
   "commentDate" : [ 2025, 6, 30, 22, 5, 59, 362000000 ],
   "editDate" : null,
   "logicallyDeleted" : false
+}, {
+  "id" : "f2baa7d6-5954-43a0-89b0-8723255b0aea",
+  "objectId" : "image_13",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "bas kida",
+  "commentDate" : [ 2025, 6, 30, 22, 11, 59, 91000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : true
 } ]
