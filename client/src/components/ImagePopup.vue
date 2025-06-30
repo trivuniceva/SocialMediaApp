@@ -11,7 +11,7 @@
 
         <div class="post-header">
           <div class="user-info">
-            <img src="/img/icons/profile-placeholder.png" alt="User Avatar" class="user-avatar">
+            <img :src="uploaderProfilePic" :alt="image.uploader" class="user-avatar">
             <span class="username">{{ image.uploader || 'Anonymous User' }}</span>
           </div>
           <p class="image-upload-date">{{ formatUploadDate(image.uploadDate) }}</p>
@@ -24,7 +24,10 @@
         <div class="comments-section">
           <div v-if="comments.length > 0" class="comment-list">
             <div v-for="comment in comments" :key="comment.id" class="comment-item">
-              <span class="comment-username">{{ comment.username }}:</span>
+              <div class="comment-header">
+                <img :src="getCommenterProfilePic(comment.userId)" alt="User Avatar" class="comment-avatar">
+                <span class="comment-username">{{ comment.username }}:</span>
+              </div>
               <span class="comment-text">{{ comment.text }}</span>
             </div>
           </div>
@@ -60,57 +63,64 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const comments = ref([]);
+const uploaderProfilePic = ref('/img/icons/profile-placeholder.png');
+const commenterProfilePics = ref({});
 
-/**
- * Zatvara pop-up prozor.
- */
 const closePopup = () => {
   emit('close');
 };
 
-/**
- * Dohvaća komentare sa backenda na osnovu ID-a slike.
- * @param {string} objectId - ID slike za koju se dohvaćaju komentari.
- */
-const fetchComments = async (objectId) => {
+const fetchCommentsAndUserData = async (objectId) => {
   if (!objectId) {
     comments.value = [];
     return;
   }
   try {
-    const response = await axios.get(`http://localhost:8080/api/comments/object/${objectId}`);
-    // Očekujemo da backend vraća listu komentara, moguće sa username-om
-    comments.value = response.data;
+    const commentsResponse = await axios.get(`http://localhost:8080/api/comments/object/${objectId}`);
+    comments.value = commentsResponse.data;
+
+    const uniqueUserIds = [...new Set(comments.value.map(c => c.userId))];
+    for (const userId of uniqueUserIds) {
+      if (!commenterProfilePics.value[userId]) {
+        const userResponse = await axios.get(`http://localhost:8080/api/users/${userId}`);
+        commenterProfilePics.value[userId] = userResponse.data.profilePicturePath;
+      }
+    }
+
+    if (props.image.userId && props.image.userId !== 'anonymous') {
+      const uploaderResponse = await axios.get(`http://localhost:8080/api/users/${props.image.userId}`);
+      uploaderProfilePic.value = uploaderResponse.data.profilePicturePath;
+    } else {
+      uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
+    }
+
   } catch (error) {
-    console.error('Greška pri učitavanju komentara:', error);
+    console.error('Greška pri učitavanju podataka:', error);
     comments.value = [];
+    uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
   }
 };
 
-/**
- * Sluša promene na `image.id` i `isVisible` kako bi se komentari ponovo dohvatili
- * kada se pop-up otvori za drugu sliku ili kada se prozor ponovo prikaže.
- */
+const getCommenterProfilePic = (userId) => {
+  return commenterProfilePics.value[userId] || '/img/icons/profile-placeholder.png';
+};
+
 watch(() => props.image?.id, (newId) => {
   if (props.isVisible && newId) {
-    fetchComments(newId);
+    fetchCommentsAndUserData(newId);
   }
 }, { immediate: true });
 
 watch(() => props.isVisible, (newVal) => {
   if (newVal && props.image?.id) {
-    fetchComments(props.image.id);
+    fetchCommentsAndUserData(props.image.id);
   } else if (!newVal) {
-    // Očisti komentare kada se prozor zatvori radi optimizacije
     comments.value = [];
+    uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
+    commenterProfilePics.value = {};
   }
 });
 
-/**
- * Formatira datum i vreme u čitljiv string.
- * @param {string} dateString - String datuma u ISO 8601 formatu.
- * @returns {string} Formatirani string datuma.
- */
 const formatUploadDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -262,6 +272,21 @@ const formatUploadDate = (dateString) => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+
 .comment-username {
   font-weight: 600;
   color: #2c3e50;
@@ -270,6 +295,7 @@ const formatUploadDate = (dateString) => {
 
 .comment-text {
   color: #555;
+  padding-left: 36px;
 }
 
 .no-comments {
