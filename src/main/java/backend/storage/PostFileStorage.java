@@ -59,4 +59,10 @@ public class PostFileStorage {
             e.printStackTrace();
         }
     }
+
+    public void addPost(Post post) {
+        posts.add(post);
+        savePosts();
+    }
+
 }

@@ -1,4 +1,3 @@
-// ImageFileStorage.java
 package backend.storage;
 
 import backend.model.Image;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class ImageFileStorage {
@@ -40,6 +40,13 @@ public class ImageFileStorage {
         }
     }
 
+    public Image findById(String id) {
+        return images.stream()
+                .filter(img -> img.getId().equals(id) && !img.isLogicallyDeleted())
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<Image> getAllImages() {
         return images;
     }
@@ -55,12 +62,40 @@ public class ImageFileStorage {
         return result;
     }
 
+    // NOVO: Metoda za dodavanje nove slike
+    public Image addImage(Image newImage) {
+        if (newImage.getId() == null || newImage.getId().isEmpty()) {
+            newImage.setId(UUID.randomUUID().toString());
+        }
+        images.add(newImage);
+        saveImages();
+        return newImage;
+    }
+
+    public void updateImage(Image updatedImage) {
+        for (int i = 0; i < images.size(); i++) {
+            if (images.get(i).getId().equals(updatedImage.getId())) {
+                images.set(i, updatedImage);
+                saveImages();
+                return;
+            }
+        }
+    }
+
     public void saveImages() {
         try {
             File file = new File(filePath);
             mapper.writerWithDefaultPrettyPrinter().writeValue(file, images);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void deleteImage(String id) {
+        Image imageToDelete = findById(id);
+        if (imageToDelete != null) {
+            imageToDelete.setLogicallyDeleted(true);
+            saveImages();
         }
     }
 }

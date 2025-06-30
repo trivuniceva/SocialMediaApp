@@ -1,13 +1,17 @@
-// ImageController.java
 package backend.controller;
 
 import backend.model.Image;
+import backend.model.User;
+import backend.storage.CommentFileStorage;
 import backend.storage.ImageFileStorage;
 import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/images")
@@ -16,6 +20,9 @@ public class ImageController {
 
     @Autowired
     private ImageFileStorage imageFileStorage;
+
+    @Autowired
+    private CommentFileStorage commentFileStorage;
 
     @Autowired
     private UserFileStorage userFileStorage;
@@ -30,5 +37,44 @@ public class ImageController {
         List<Image> userImages = imageFileStorage.getImagesByIds(user.getImageIds());
         System.out.println("Found " + userImages.size() + " images for userId: " + userId);
         return userImages;
+    }
+
+    @PostMapping("/add")
+    public Image addImage(@RequestBody Image newImage) {
+        // Generiši novi ID za sliku
+        if (newImage.getId() == null || newImage.getId().isEmpty()) {
+            newImage.setId(UUID.randomUUID().toString());
+        }
+        newImage.setUploadDate(LocalDateTime.now());
+        newImage.setCommentIds(new ArrayList<>());
+        newImage.setLogicallyDeleted(false);
+
+        Image addedImage = imageFileStorage.addImage(newImage);
+
+        User user = userFileStorage.findById(newImage.getUserId());
+        if (user != null) {
+            if (user.getImageIds() == null) {
+                user.setImageIds(new ArrayList<>());
+            }
+            user.getImageIds().add(addedImage.getId());
+            userFileStorage.saveUsers();
+        }
+
+        return addedImage;
+    }
+
+    @DeleteMapping("/{imageId}")
+    public void deleteImage(@PathVariable String imageId) {
+        Image imageToDelete = imageFileStorage.findById(imageId);
+
+        if (imageToDelete != null) {
+            System.out.println(imageToDelete.getCommentIds());
+            if (imageToDelete.getCommentIds() != null) {
+                for (String commentId : imageToDelete.getCommentIds()) {
+                    commentFileStorage.deleteComment(commentId);
+                }
+            }
+            imageFileStorage.deleteImage(imageId);
+        }
     }
 }

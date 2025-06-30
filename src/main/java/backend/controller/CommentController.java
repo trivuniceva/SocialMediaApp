@@ -2,17 +2,24 @@ package backend.controller;
 
 import backend.dto.CommentDTO;
 import backend.model.Comment;
+import backend.model.Image;
 import backend.model.User;
 import backend.storage.CommentFileStorage;
+import backend.storage.ImageFileStorage;
 import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
+
+    @Autowired
+    private ImageFileStorage imageStorage;
 
     @Autowired
     private UserFileStorage userStorage;
@@ -50,12 +57,24 @@ public class CommentController {
 
     @PostMapping("/add")
     public Comment addComment(@RequestBody Comment newComment) {
-        return commentStorage.addComment(newComment);
+        Comment addedComment = commentStorage.addComment(newComment);
+
+        if ("IMAGE".equals(newComment.getObjectType())) {
+            Image imageToUpdate = imageStorage.findById(newComment.getObjectId());
+            if (imageToUpdate != null) {
+                if (imageToUpdate.getCommentIds() == null) {
+                    imageToUpdate.setCommentIds(new ArrayList<>());
+                }
+                imageToUpdate.getCommentIds().add(addedComment.getId());
+                imageStorage.saveImages();
+            }
+        }
+
+        return addedComment;
     }
 
     @DeleteMapping("/{id}")
     public void deleteComment(@PathVariable String id) {
         commentStorage.deleteComment(id);
     }
-
 }

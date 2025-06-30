@@ -4,4 +4,16 @@
   "receiverId" : "user_1",
   "status" : "accepted",
   "date" : [ 2025, 6, 30, 22, 37, 32, 148636000 ]
+}, {
+  "id" : "77622e84-7050-4506-9fbc-d78309e2cf56",
+  "senderId" : "user_1",
+  "receiverId" : "user_2",
+  "status" : "rejected",
+  "date" : [ 2025, 7, 1, 0, 40, 55, 694043000 ]
+}, {
+  "id" : "41d02910-4332-4a19-9633-b27498853544",
+  "senderId" : "user_1",
+  "receiverId" : "user_2",
+  "status" : "rejected",
+  "date" : [ 2025, 7, 1, 0, 41, 32, 918181000 ]
 } ]

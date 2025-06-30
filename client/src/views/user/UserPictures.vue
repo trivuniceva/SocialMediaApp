@@ -8,12 +8,11 @@
     <div v-else>
       <p>No pictures to display.</p>
     </div>
-
   </div>
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue'; // Dodali smo defineEmits
+import { ref, watch, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -23,8 +22,8 @@ const props = defineProps({
   },
 });
 
-// Definisanje događaja koji se emituje roditeljskoj komponenti
-const emit = defineEmits(['open-image-popup']);
+// Dodajemo novi emit za brisanje slike
+const emit = defineEmits(['open-image-popup', 'image-deleted']);
 
 const images = ref([]);
 
@@ -44,13 +43,22 @@ const fetchImages = async () => {
   }
 };
 
-// Slušaj promene na userId prop-u i ponovo dohvati podatke
 watch(() => props.userId, fetchImages, { immediate: true });
 
 // Emitujemo događaj kada se klikne na sliku
 const openImagePopup = (image) => {
   emit('open-image-popup', image);
 };
+
+// Nova funkcija za uklanjanje slike iz liste kada je obrisana
+const removeImage = (imageId) => {
+  images.value = images.value.filter(image => image.id !== imageId);
+};
+
+// Izloži funkciju roditeljskoj komponenti
+defineExpose({
+  removeImage
+});
 </script>
 
 <style scoped>

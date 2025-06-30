@@ -6,6 +6,7 @@ import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,4 +31,22 @@ public class PostController {
         System.out.println("Found " + userPosts.size() + " posts for userId: " + userId);
         return userPosts;
     }
+
+    @PostMapping("/add")
+    public void addPost(@RequestBody Post post) {
+        postFileStorage.addPost(post);
+
+        var user = userFileStorage.findById(post.getUserId());
+        if (user != null) {
+            var postIds = user.getPostIds();
+            if (postIds == null) {
+                postIds = new ArrayList<>();
+                user.setPostIds(postIds);
+            }
+            postIds.add(post.getId());
+            userFileStorage.saveUsers();
+        }
+    }
+
+
 }
