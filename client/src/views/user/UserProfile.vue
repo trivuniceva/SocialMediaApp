@@ -6,7 +6,11 @@
         <div class="profile-username">
           <h3>{{ user.username }}</h3>
           <router-link to="#" @click.prevent="togglePopup" class="followers-link">
-            <strong>{{ user.friendListIds?.length || 0 }} followers</strong>
+            <strong>{{ user.friendListIds?.length || 0 }} Followers</strong>
+          </router-link>
+
+          <router-link to="#" @click.prevent="toggleFriendRequestsPopup" class="followers-link">
+            <strong>{{ pendingRequests.length }} Friend Requests</strong>
           </router-link>
 
         </div>
@@ -70,6 +74,15 @@
         :close="togglePopup"
     />
 
+    <FriendRequestsPopup
+        v-if="isFriendRequestsPopupOpen"
+        :requests="pendingRequests"
+        @close="toggleFriendRequestsPopup"
+        @accept="handleAcceptRequest"
+        @reject="handleRejectRequest"
+    />
+
+
 
   </div>
 
@@ -82,21 +95,21 @@
 import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-// import FollowersPopup from './FollowersPopup.vue'
 import User from '@/models/User'
 import UserPictures from './UserPictures.vue'
 import UserPosts from './UserPosts.vue'
 import FollowersPopup from "@/components/FollowersPopup.vue";
+import FriendRequestsPopup from "@/components/FriendRequestsPopup.vue";
 
 const store = useStore()
 const route = useRoute()
 const user = ref(null)
+const friendRequests = ref([])
 
 const errorMessage = ref('')
 
 const loggedUser = computed(() => store.state.loggedUser)
 
-// Ovo je ključna computed property koja određuje vidljivost sadržaja
 const canViewContent = computed(() => {
   if (!user.value) return false;
 
@@ -119,6 +132,18 @@ const canViewContent = computed(() => {
   return false;
 })
 
+
+const pendingRequests = computed(() =>
+    friendRequests.value.filter(req =>
+        req.receiverId === user.value?.id && req.status === 'pending'
+    )
+)
+
+const userId = route.params.id || store.state.loggedUser?.id
+console.log("User ID za zahteve:", userId);
+
+
+
 onMounted(async () => {
   // Prvo dohvati ID korisnika iz rute, a ako ga nema, koristi ID ulogovanog korisnika
   const userId = route.params.id || store.state.loggedUser?.id
@@ -137,6 +162,18 @@ onMounted(async () => {
   } catch (error) {
     errorMessage.value = 'Greška prilikom učitavanja korisnika'
   }
+
+  const response = await fetch(`http://localhost:8080/api/friend-requests/received/${userId}`)
+
+  if (response.ok) {
+    const data = await response.json();
+    console.log("Friend requests from backend:", data);
+    friendRequests.value = data;
+  } else {
+    console.error("Failed to load friend requests", response.status);
+  }
+
+
 })
 
 const isPopupOpen = ref(false)
@@ -155,13 +192,27 @@ function togglePopupPost(post) {
   currentPost.value = post || null
 }
 
-// Ovu funkciju si imao dva puta, ostavio sam samo jednu u onMounted
-// onMounted(() => {
-//   const userStr = localStorage.getItem('loggedUser')
-//   if (userStr) {
-//     user.value = new User(JSON.parse(userStr))
-//   }
-// })
+
+const isFriendRequestsPopupOpen = ref(false)
+
+function toggleFriendRequestsPopup() {
+  isFriendRequestsPopupOpen.value = !isFriendRequestsPopupOpen.value
+}
+
+async function handleAcceptRequest(requestId) {
+  await fetch(`http://localhost:8080/api/friend-requests/${requestId}/accept`, { method: 'POST' })
+  friendRequests.value = friendRequests.value.map(req =>
+      req.id === requestId ? { ...req, status: 'accepted' } : req
+  )
+}
+
+async function handleRejectRequest(requestId) {
+  await fetch(`http://localhost:8080/api/friend-requests/${requestId}/reject`, { method: 'POST' })
+  friendRequests.value = friendRequests.value.map(req =>
+      req.id === requestId ? { ...req, status: 'rejected' } : req
+  )
+}
+
 </script>
 
 <style scoped>
