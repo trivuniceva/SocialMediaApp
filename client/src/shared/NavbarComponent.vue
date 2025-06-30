@@ -9,19 +9,19 @@
       </template>
 
       <template v-else>
-        <div class="dropdown">
+        <div class="dropdown" @click.stop="toggleDropdown('profile')">
           <span class="dropdown-trigger">Profile ▾</span>
-          <div class="dropdown-menu">
-            <router-link to="/profile">View Profile</router-link>
-            <router-link to="/edit-profile">Edit Profile</router-link>
+          <div v-if="openDropdown === 'profile'" class="dropdown-menu" @click.stop>
+            <router-link to="/profile" @click="closeDropdown">View Profile</router-link>
+            <router-link to="/edit-profile" @click="closeDropdown">Edit Profile</router-link>
           </div>
         </div>
 
-        <div class="dropdown">
+        <div class="dropdown" @click.stop="toggleDropdown('content')">
           <span class="dropdown-trigger">Content ▾</span>
-          <div class="dropdown-menu">
-            <router-link to="/add-image">Add Image</router-link>
-            <router-link to="/add-post">Add Post</router-link>
+          <div v-if="openDropdown === 'content'" class="dropdown-menu" @click.stop>
+            <router-link to="/add-image" @click="closeDropdown">Add Image</router-link>
+            <router-link to="/add-post" @click="closeDropdown">Add Post</router-link>
           </div>
         </div>
 
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import { mapState } from 'vuex'
 import BackgroundVideo from "@/views/BackgroundVideo.vue"
 
@@ -41,6 +42,35 @@ export default {
   name: "NavbarComponent",
   components: {
     BackgroundVideo
+  },
+  setup() {
+    const openDropdown = ref(null)
+
+    const toggleDropdown = (menu) => {
+      openDropdown.value = openDropdown.value === menu ? null : menu
+    }
+
+    const closeDropdown = () => {
+      openDropdown.value = null
+    }
+
+    // zatvaranje dropdowna kada klikneš van navbar-a
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.navbar')) {
+        closeDropdown()
+      }
+    }
+
+    window.addEventListener('click', handleClickOutside)
+
+    // Obrati pažnju da bi bilo dobro ovo ukloniti na unmount komponenti (ako koristiš Composition API)
+    // Ovde samo demo za jednostavnost
+
+    return {
+      openDropdown,
+      toggleDropdown,
+      closeDropdown,
+    }
   },
   computed: {
     ...mapState(['loggedUser']),
@@ -80,14 +110,15 @@ a:hover, .dropdown-trigger:hover {
   text-decoration: underline;
 }
 
+/* Dropdown style */
 .dropdown {
   position: relative;
+  user-select: none;
 }
 
 .dropdown-menu {
-  display: none;
   position: absolute;
-  top: 24px;
+  top: 28px;
   left: 0;
   background-color: white;
   border: 1px solid #eee;
@@ -96,9 +127,6 @@ a:hover, .dropdown-trigger:hover {
   min-width: 150px;
   z-index: 10;
   padding: 8px 0;
-}
-
-.dropdown:hover .dropdown-menu {
   display: flex;
   flex-direction: column;
 }
