@@ -10,7 +10,7 @@
   },
   {
     "id": "post_2",
-    "userId": "user_2",
+    "userId": "user_1",
     "imagePath": null,
     "text": "Today I learned something new about programming. Fascinating!",
     "commentIds": [],
@@ -24,6 +24,51 @@
     "text": "New cake recipe, you must try it!",
     "commentIds": ["comment_2"],
     "creationDate": "2024-06-25T18:00:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_4",
+    "userId": "user_1",
+    "imagePath": "/images/posts/post_4_pic.jpg",
+    "text": "Sunset views never get old. #sunset #relax",
+    "commentIds": ["comment_3"],
+    "creationDate": "2024-06-27T20:15:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_5",
+    "userId": "user_1",
+    "imagePath": null,
+    "text": "Just finished reading an amazing book on mindfulness. Highly recommend!",
+    "commentIds": [],
+    "creationDate": "2024-06-28T09:45:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_6",
+    "userId": "user_1",
+    "imagePath": null,
+    "text": "Weekend hike was so refreshing. Need to do this more often!",
+    "commentIds": ["comment_4"],
+    "creationDate": "2024-06-29T08:30:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_7",
+    "userId": "user_1",
+    "imagePath": null,
+    "text": "Trying out a new coding challenge today. Wish me luck!",
+    "commentIds": [],
+    "creationDate": "2024-06-30T11:00:00Z",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "post_8",
+    "userId": "user_1",
+    "imagePath": "/images/posts/post_8_pic.jpg",
+    "text": "Delicious homemade pasta dinner tonight. #foodie #homemade",
+    "commentIds": ["comment_6"],
+    "creationDate": "2024-07-01T19:20:00Z",
     "logicallyDeleted": false
   }
 ]
