@@ -76,4 +76,13 @@ public class FriendRequestFileStorage {
         }
         System.out.println("FriendRequestFileStorage: Zahtev " + updatedRequest.getId() + " nije pronađen za ažuriranje.");
     }
+
+    public void saveNewRequest(FriendRequest newRequest) {
+        if (requests == null) {
+            requests = new ArrayList<>();
+        }
+        requests.add(newRequest);
+        saveRequests();
+        System.out.println("FriendRequestFileStorage: Novi zahtev " + newRequest.getId() + " je sačuvan.");
+    }
 }

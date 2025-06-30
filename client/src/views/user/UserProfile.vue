@@ -153,7 +153,6 @@ const pendingRequests = computed(() =>
     )
 )
 
-// Modified fetchUserData to also fetch sent requests for the logged user
 async function fetchUserData(id) {
   if (!id) {
     errorMessage.value = 'Korisnik nije pronađen';
@@ -171,7 +170,6 @@ async function fetchUserData(id) {
     user.value = await response.json()
     errorMessage.value = '';
 
-    // Fetch received friend requests for the profile user
     const receivedRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${id}`);
     if (receivedRequestsResponse.ok) {
       friendRequestsReceived.value = await receivedRequestsResponse.json();
@@ -179,8 +177,7 @@ async function fetchUserData(id) {
       console.error('Failed to load received friend requests', receivedRequestsResponse.status);
     }
 
-    // NEW: Fetch sent friend requests for the logged-in user if they exist
-    if (loggedUser.value) {
+    if (loggedUser.value && loggedUser.value.id !== id) {
       const sentRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/sent/${loggedUser.value.id}`);
       if (sentRequestsResponse.ok) {
         friendRequestsSent.value = await sentRequestsResponse.json();
@@ -188,6 +185,11 @@ async function fetchUserData(id) {
         console.error('Failed to load sent friend requests', sentRequestsResponse.status);
       }
     }
+
+    if (loggedUser.value && user.value.id === loggedUser.value.id) {
+      friendRequestsSent.value = [];
+    }
+
 
   } catch (error) {
     errorMessage.value = 'Greška prilikom učitavanja korisnika'

@@ -34,4 +34,21 @@ public class FriendRequestController {
         boolean success = friendRequestService.rejectRequest(requestId);
         return success ? ResponseEntity.ok("Rejected") : ResponseEntity.badRequest().body("Invalid ID");
     }
+
+    @PostMapping("/send")
+    public ResponseEntity<?> sendRequest(@RequestBody FriendRequest request) {
+        FriendRequest newRequest = friendRequestService.sendFriendRequest(request.getSenderId(), request.getReceiverId());
+        if (newRequest != null) {
+            return ResponseEntity.ok(newRequest);
+        } else {
+            return ResponseEntity.badRequest().body("Failed to send friend request. Users may not exist or request already pending.");
+        }
+    }
+
+    @GetMapping("/sent/{userId}")
+    public ResponseEntity<?> getSentRequests(@PathVariable String userId) {
+        List<FriendRequest> sent = friendRequestService.getSentRequestsForUser(userId);
+        return ResponseEntity.ok(sent);
+    }
+
 }
