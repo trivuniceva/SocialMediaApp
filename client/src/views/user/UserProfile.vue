@@ -8,6 +8,7 @@
           <router-link to="#" @click.prevent="togglePopup" class="followers-link">
             <strong>{{ user.friendListIds?.length || 0 }} followers</strong>
           </router-link>
+
         </div>
         <p class="full-name">{{ user.firstName }} {{ user.lastName }}</p>
         <p class="dob">{{ user.dateOfBirth }}</p>
@@ -63,22 +64,13 @@
       </div>
     </div>
 
-    <div v-if="isPopupOpen" class="popup-overlay" @click.self="togglePopup">
-      <div class="popup-window">
-        <button class="close-popup-button" @click="togglePopup">
-          <p>X</p>
-        </button>
-        <h3><strong>Followers</strong></h3>
-        <div class="follower-list-container">
-          <ul>
-            <li v-for="(follower, index) in user.friendListIds || []" :key="index" class="follower-item">
-              <span>{{ follower }}</span>
-              <button class="remove-follower-button">Remove</button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <FollowersPopup
+        v-if="isPopupOpen"
+        :followers="user.friendListIds || []"
+        :close="togglePopup"
+    />
+
+
   </div>
 
   <div v-else class="loading-message">
@@ -90,10 +82,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-
+// import FollowersPopup from './FollowersPopup.vue'
 import User from '@/models/User'
 import UserPictures from './UserPictures.vue'
 import UserPosts from './UserPosts.vue'
+import FollowersPopup from "@/components/FollowersPopup.vue";
 
 const store = useStore()
 const route = useRoute()
