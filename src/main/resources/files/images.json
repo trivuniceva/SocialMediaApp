@@ -182,4 +182,12 @@
   "commentIds" : [ ],
   "uploadDate" : "2025-07-01T01:09:06.225562",
   "logicallyDeleted" : false
+}, {
+  "id" : "fc3d24fc-9a4c-4fb7-8f3d-82bfee9ed0a0",
+  "userId" : "user_4",
+  "path" : "/images/user_uploads/test2.jpg",
+  "text" : "tanjiri",
+  "commentIds" : [ ],
+  "uploadDate" : "2025-07-01T01:16:18.831782",
+  "logicallyDeleted" : false
 } ]
