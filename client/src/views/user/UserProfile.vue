@@ -17,12 +17,24 @@
     <div class="line-separation"></div>
 
     <div class="lower-section">
-      <div class="post" v-for="(post, index) in user.posts || []" :key="index">
-        <router-link to="#" @click.prevent="togglePopupPost(post)">
-          <img :src="post.picturePath" alt="Post Image" />
-        </router-link>
+      <div class="button-group">
+        <button
+            class="tab-button"
+            :class="{ active: selectedSection === 'pictures' }"
+            @click="selectedSection = 'pictures'"
+        >Pictures</button>
+
+        <button
+            class="tab-button"
+            :class="{ active: selectedSection === 'posts' }"
+            @click="selectedSection = 'posts'"
+        >Posts</button>
       </div>
+
+      <UserPictures v-if="selectedSection === 'pictures'" :imageIds="user.imageIds" />
+      <UserPosts v-else :posts="user.posts" />
     </div>
+
 
     <div v-if="isPopupPostOpen" class="popupPost" @click.self="togglePopupPost(null)">
       <div class="popup-window-post">
@@ -49,7 +61,6 @@
     <div v-if="isPopupOpen" class="popup-overlay" @click.self="togglePopup">
       <div class="popup-window">
         <button class="closeBtn" @click="togglePopup">
-<!--          <img style="width: 16px" src="img/icons/closeIcon.png">-->
           <p>X</p>
         </button>
         <h3><strong>Followers</strong></h3>
@@ -71,13 +82,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import User from '@/models/User'
+import User from '@/models/User' // Pretpostavka da imaš User model u ovom direktorijumu
+// Pobrini se da su putanje ispravne za tvoj projekat
+import UserPictures from './UserPictures.vue' // Importuj UserPictures komponentu
+import UserPosts from './UserPosts.vue'     // Importuj UserPosts komponentu (ako je imaš)
 
 const user = ref(null)
 const isPopupOpen = ref(false)
 const isPopupPostOpen = ref(false)
 const currentImage = ref('')
 const currentPost = ref(null)
+const selectedSection = ref('pictures'); // Dodaj reaktivnu varijablu za odabranu sekciju, podrazumevano 'pictures'
 
 function togglePopup() {
   isPopupOpen.value = !isPopupOpen.value
@@ -179,6 +194,7 @@ onMounted(() => {
 
 .UserInfoSection {
   height: 10%;
+
 }
 
 .UserInfoSection p {
@@ -199,15 +215,16 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  height: 300px;
+  min-height: calc(100vh - 100px);
   width: 75%;
   margin: 0 auto;
   background-color: #f4f4f4;
   color: #2c3e50;
   padding: 2rem;
   border-radius: 10px;
+  box-sizing: border-box;
 }
 
 .upper-section {
@@ -216,7 +233,7 @@ onMounted(() => {
   justify-content: center;
   margin-bottom: 20px;
   width: 100%;
-  height: 100%;
+  flex-shrink: 0;
 }
 
 .profile-pic {
@@ -244,8 +261,10 @@ onMounted(() => {
 
 .lower-section {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column; /* Dodato za vertikalni raspored */
+  flex-grow: 1; /* Omogućava donjem delu da zauzme sav preostali prostor */
+  width: 100%;
+  overflow: hidden; /* Skriva overflow unutar ovog dela (ako tabovi imaju fiksnu visinu) */
 }
 
 .post {
@@ -273,5 +292,32 @@ onMounted(() => {
   border-radius: 5px;
   margin-left: 15%;
   color: #2c3e50;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.tab-button:hover {
+  background-color: #d6e4ec;
+}
+.tab-button.active {
+  background-color: #f86b86;
+  color: white;
 }
 </style>
