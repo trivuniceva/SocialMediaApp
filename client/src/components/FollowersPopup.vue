@@ -28,7 +28,7 @@ import { useRouter } from 'vue-router'
 
 const props = defineProps({
   followers: {
-    type: Array, // Ovo je sada niz ID-eva
+    type: Array,
     required: true
   },
   close: {

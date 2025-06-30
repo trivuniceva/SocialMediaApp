@@ -1,13 +1,7 @@
 [ {
-  "id" : "fr_1",
-  "senderId" : "user_4",
-  "receiverId" : "user_1",
-  "status" : "accepted",
-  "date" : [ 2024, 6, 29, 11, 14 ]
-}, {
-  "id" : "fr_2",
+  "id" : "8436efcf-0138-46e1-a7e9-50d74ac69a41",
   "senderId" : "user_3",
   "receiverId" : "user_1",
   "status" : "accepted",
-  "date" : [ 2024, 6, 27, 11, 20 ]
+  "date" : [ 2025, 6, 30, 22, 37, 32, 148636000 ]
 } ]

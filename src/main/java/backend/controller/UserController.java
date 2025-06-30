@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -30,7 +31,12 @@ public class UserController {
             Resource resource = new ClassPathResource("files/users.json");
             InputStream is = resource.getInputStream();
             List<User> users = mapper.readValue(is, new TypeReference<List<User>>() {});
-            return ResponseEntity.ok(users);
+
+            List<User> nonAdminUsers = users.stream()
+                    .filter(user -> !"Administrator".equals(user.getRole()))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(nonAdminUsers);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Greška prilikom čitanja korisnika.");
         }

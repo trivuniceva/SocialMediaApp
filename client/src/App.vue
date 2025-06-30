@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import NavbarComponent from "@/components/NavbarComponent.vue";
+import NavbarComponent from "@/shared/NavbarComponent.vue";
 </script>
 
 <style lang="scss">
