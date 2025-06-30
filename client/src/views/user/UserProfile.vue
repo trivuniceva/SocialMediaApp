@@ -24,11 +24,17 @@
             <span v-else-if="hasSentRequest(user.id)" class="pending-request-message">
               Request Sent
             </span>
-            <button v-else-if="hasReceivedRequest(user.id)"
-                    @click="acceptFriendRequest(user.id)"
-                    class="accept-friend-button">
-              Accept Request
-            </button>
+            <div v-else-if="hasReceivedRequest(user.id)" class="request-buttons-group">
+              <button @click="acceptFriendRequest(user.id)" class="accept-friend-button">
+                Accept
+              </button>
+              <button @click="rejectFriendRequest(user.id)" class="reject-friend-button">
+                Reject
+              </button>
+            </div>
+            <span v-else-if="isFriend(user.id)" class="pending-request-message">
+                Friends
+            </span>
           </div>
 
         </div>
@@ -116,24 +122,24 @@ import FriendRequestsPopup from "@/components/FriendRequestsPopup.vue"
 const store = useStore()
 const route = useRoute()
 const user = ref(null)
-const friendRequestsReceived = ref([]) // Renamed for clarity: requests this user received
-const friendRequestsSent = ref([]) // NEW: ref for requests this user sent
+const friendRequestsReceived = ref([]) // Requests that the LOGGED-IN user has received
+const friendRequestsSent = ref([]) // Requests that the LOGGED-IN user has sent
 const errorMessage = ref('')
 
 const loggedUser = computed(() => store.state.loggedUser)
 
-// NEW: Computed properties to check friendship status
+// This function checks if the logged-in user is already friends with the profile user.
 const isFriend = (userId) => {
   return loggedUser.value?.friendListIds?.includes(userId)
 }
 
+// This function checks if the logged-in user has sent a request to the profile user.
 const hasSentRequest = (userId) => {
-  // Checks if logged user sent a pending request to this profile user
   return friendRequestsSent.value.some(req => req.receiverId === userId && req.status === 'pending')
 }
 
+// This function checks if the profile user has sent a request to the logged-in user.
 const hasReceivedRequest = (userId) => {
-  // Checks if this profile user sent a pending request to logged user
   return friendRequestsReceived.value.some(req => req.senderId === userId && req.status === 'pending')
 }
 
@@ -153,7 +159,6 @@ const pendingRequests = computed(() =>
     )
 )
 
-// Ažurirana funkcija fetchUserData u <script setup> bloku
 async function fetchUserData(id) {
   if (!id) {
     errorMessage.value = 'Korisnik nije pronađen';
@@ -162,38 +167,37 @@ async function fetchUserData(id) {
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/api/users/${id}`)
-    if (!response.ok) {
+    const userResponse = await fetch(`http://localhost:8080/api/users/${id}`)
+    if (!userResponse.ok) {
       errorMessage.value = 'Korisnik nije pronađen'
       user.value = null;
       return
     }
-    user.value = await response.json()
+    user.value = await userResponse.json()
     errorMessage.value = '';
 
-    // Uvek dohvati primljene zahteve za korisnika čiji se profil gleda
-    const receivedRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${id}`);
-    if (receivedRequestsResponse.ok) {
-      friendRequestsReceived.value = await receivedRequestsResponse.json();
-    } else {
-      console.error('Failed to load received friend requests', receivedRequestsResponse.status);
-    }
+    // --- KLJUČNA IZMENA: Dohvati zahteve za LOGGED USER, ne za user na profilu ---
+    // Dohvatanje primljenih zahteva za ulogovanog korisnika
+    if (loggedUser.value) {
+      const receivedRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${loggedUser.value.id}`);
+      if (receivedRequestsResponse.ok) {
+        friendRequestsReceived.value = await receivedRequestsResponse.json();
+      } else {
+        console.error('Failed to load received friend requests for logged user', receivedRequestsResponse.status);
+      }
 
-    // Ažurirani deo koda: Dohvati poslate zahteve SAMO ako se gleda TUĐI profil
-    // i ako je korisnik ulogovan.
-    if (loggedUser.value && user.value.id !== loggedUser.value.id) {
+      // Dohvatanje poslatih zahteva od ulogovanog korisnika
       const sentRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/sent/${loggedUser.value.id}`);
       if (sentRequestsResponse.ok) {
         friendRequestsSent.value = await sentRequestsResponse.json();
       } else {
-        console.error('Failed to load sent friend requests', sentRequestsResponse.status);
+        console.error('Failed to load sent friend requests for logged user', sentRequestsResponse.status);
       }
+    } else {
+      // Ako korisnik nije ulogovan, isprazi liste zahteva
+      friendRequestsReceived.value = [];
+      friendRequestsSent.value = [];
     }
-
-    if (loggedUser.value && user.value.id === loggedUser.value.id) {
-      friendRequestsSent.value = []; 
-    }
-
 
   } catch (error) {
     errorMessage.value = 'Greška prilikom učitavanja korisnika'
@@ -237,9 +241,8 @@ function toggleFriendRequestsPopup() {
   isFriendRequestsPopupOpen.value = !isFriendRequestsPopupOpen.value
 }
 
-// NEW: Function to send a friend request
 async function sendFriendRequest(receiverId) {
-  if (!loggedUser.value) return; // Must be logged in
+  if (!loggedUser.value) return;
   try {
     const response = await fetch('http://localhost:8080/api/friend-requests/send', {
       method: 'POST',
@@ -248,7 +251,8 @@ async function sendFriendRequest(receiverId) {
     });
     if (response.ok) {
       const newRequest = await response.json();
-      friendRequestsSent.value.push(newRequest); // Add the new request to the list
+      // Add the new request to the list of sent requests
+      friendRequestsSent.value.push(newRequest);
       console.log('Friend request sent!', newRequest);
     } else {
       console.error('Failed to send friend request', response.status);
@@ -258,50 +262,101 @@ async function sendFriendRequest(receiverId) {
   }
 }
 
-// NEW: Function to accept a friend request from the other user's profile
+// IZMENJENA FUNKCIJA
 async function acceptFriendRequest(senderId) {
-  // Find the request
   const requestToAccept = friendRequestsReceived.value.find(
       req => req.senderId === senderId && req.receiverId === loggedUser.value.id && req.status === 'pending'
   );
-  if (!requestToAccept) return;
-
-  await handleAcceptRequest(requestToAccept.id);
-
-  // Update friend lists to reflect the new friendship
-  if (loggedUser.value) {
-    loggedUser.value.friendListIds.push(senderId); // Add sender to logged user's friend list
-    store.commit('setLoggedUser', loggedUser.value); // Update Vuex store
+  if (!requestToAccept) {
+    console.error('Request not found.');
+    return;
   }
-  if (user.value) {
-    user.value.friendListIds.push(loggedUser.value.id); // Add logged user to profile user's friend list
+
+  try {
+    await handleAcceptRequest(requestToAccept.id);
+
+    // Update the friend list in the Vuex store to immediately reflect the change
+    if (loggedUser.value && !loggedUser.value.friendListIds.includes(senderId)) {
+      const updatedFriends = [...loggedUser.value.friendListIds, senderId];
+      store.commit('setLoggedUser', { ...loggedUser.value, friendListIds: updatedFriends });
+    }
+
+    // Re-fetch data for the profile user to ensure UI is in sync
+    await fetchUserData(user.value.id);
+
+  } catch (error) {
+    console.error('Error accepting friend request:', error);
   }
 }
 
+// IZMENJENA FUNKCIJA
+async function rejectFriendRequest(senderId) {
+  const requestToReject = friendRequestsReceived.value.find(
+      req => req.senderId === senderId && req.receiverId === loggedUser.value.id && req.status === 'pending'
+  );
+  if (!requestToReject) {
+    console.error('Request not found.');
+    return;
+  }
+
+  try {
+    await handleRejectRequest(requestToReject.id);
+    // Re-fetch data for the profile user to update the UI
+    await fetchUserData(user.value.id);
+  } catch (error) {
+    console.error('Error rejecting friend request:', error);
+  }
+}
+
+// IZMENJENA FUNKCIJA
 async function handleAcceptRequest(requestId) {
-  await fetch(`http://localhost:8080/api/friend-requests/accept/${requestId}`, { method: 'POST' })
-  friendRequestsReceived.value = friendRequestsReceived.value.map(req =>
-      req.id === requestId ? { ...req, status: 'accepted' } : req
-  )
+  try {
+    const response = await fetch(`http://localhost:8080/api/friend-requests/accept/${requestId}`, { method: 'POST' });
+    if (response.ok) {
+      // Remove the accepted request from the list to hide the buttons
+      friendRequestsReceived.value = friendRequestsReceived.value.filter(req => req.id !== requestId);
+    } else {
+      console.error('Failed to accept request', response.status);
+    }
+  } catch (error) {
+    console.error('Error accepting request', error);
+  }
 }
 
+// IZMENJENA FUNKCIJA
 async function handleRejectRequest(requestId) {
-  await fetch(`http://localhost:8080/api/friend-requests/reject/${requestId}`, { method: 'POST' })
-  friendRequestsReceived.value = friendRequestsReceived.value.map(req =>
-      req.id === requestId ? { ...req, status: 'rejected' } : req
-  )
+  try {
+    const response = await fetch(`http://localhost:8080/api/friend-requests/reject/${requestId}`, { method: 'POST' });
+    if (response.ok) {
+      // Remove the rejected request from the list to hide the buttons
+      friendRequestsReceived.value = friendRequestsReceived.value.filter(req => req.id !== requestId);
+    } else {
+      console.error('Failed to reject request', response.status);
+    }
+  } catch (error) {
+    console.error('Error rejecting request', error);
+  }
 }
+
 
 async function handleRemoveFriend(friendId) {
   try {
     const response = await fetch(
-        `http://localhost:8080/api/users/${user.value.id}/remove-friend/${friendId}`,
+        `http://localhost:8080/api/users/${loggedUser.value.id}/remove-friend/${friendId}`,
         {
           method: 'POST',
         }
     )
     if (response.ok) {
-      user.value.friendListIds = user.value.friendListIds.filter(id => id !== friendId)
+      // Update logged user's friend list in state and store
+      const updatedFriendList = loggedUser.value.friendListIds.filter(id => id !== friendId);
+      store.commit('setLoggedUser', { ...loggedUser.value, friendListIds: updatedFriendList });
+      // Update the profile user's friend list
+      if (user.value.friendListIds) {
+        user.value.friendListIds = user.value.friendListIds.filter(id => id !== loggedUser.value.id);
+      }
+      // Re-fetch data for a clean state
+      await fetchUserData(user.value.id);
     } else {
       console.error('Failed to remove friend', response.status)
     }
@@ -310,7 +365,6 @@ async function handleRemoveFriend(friendId) {
   }
 }
 </script>
-
 
 <style scoped>
 .private-profile-message {
@@ -821,4 +875,28 @@ h3 {
   background-color: #f0f0f0;
   border-radius: 20px;
 }
+
+/* AŽURIRANI STILOVI */
+.request-buttons-group {
+  display: flex;
+  gap: 10px; /* Razmak između dugmadi */
+}
+
+.reject-friend-button {
+  background-color: #dc3545; /* Crvena boja za odbijanje */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.reject-friend-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
 </style>
