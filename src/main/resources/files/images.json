@@ -55,7 +55,7 @@
   },
   {
     "id": "image_7",
-    "userId": "user_1",
+    "userId": "user_2",
     "path": "/images/user_uploads/image_7.jpg",
     "text": "Weekend reads and peace.",
     "commentIds": [],
@@ -69,6 +69,42 @@
     "text": "City walk, a moment captured.",
     "commentIds": [],
     "uploadDate": "2024-06-25T09:00:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_9",
+    "userId": "user_2",
+    "path": "/images/user_uploads/image_9.jpg",
+    "text": "Chillin' in the urban jungle.",
+    "commentIds": [],
+    "uploadDate": "2024-06-26T15:45:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_10",
+    "userId": "user_2",
+    "path": "/images/user_uploads/image_10.jpg",
+    "text": "Rainy day reflections.",
+    "commentIds": [],
+    "uploadDate": "2024-06-27T10:00:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_11",
+    "userId": "user_2",
+    "path": "/images/user_uploads/image_11.jpg",
+    "text": "Window light and shadows.",
+    "commentIds": [],
+    "uploadDate": "2024-06-27T13:10:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_12",
+    "userId": "user_2",
+    "path": "/images/user_uploads/image_12.jpg",
+    "text": "Evening bike ride through the park.",
+    "commentIds": [],
+    "uploadDate": "2024-06-28T19:25:00",
     "logicallyDeleted": false
   }
 ]

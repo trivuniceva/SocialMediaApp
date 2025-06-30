@@ -25,9 +25,14 @@ import { ref, watch, defineProps } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
-  imageIds: {
-    type: Array,
-    default: () => [],
+  // Umesto imageIds, treba ti userId kao prop.
+  // Proveri da li UserProfile.vue šalje userId ili imageIds.
+  // Ako šalje imageIds, onda je putanja ka backendu neispravna i treba da je menjaš.
+  // Ako šalje userId, onda je ovo ok.
+  // Pošto imaš userId u UserPosts, verovatno ga imaš i ovde.
+  userId: {
+    type: String,
+    required: true,
   },
 });
 
@@ -36,26 +41,26 @@ const isImagePopupOpen = ref(false);
 const currentImage = ref(null);
 
 const fetchImages = async () => {
-  const userStr = localStorage.getItem('loggedUser');
-  if (userStr) {
-    const loggedUser = JSON.parse(userStr);
-    if (loggedUser && loggedUser.id) {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/images/user/${loggedUser.id}`);
-        images.value = response.data;
-      } catch (error) {
-        console.error('Error fetching images:', error);
-        images.value = [];
-      }
-    } else {
-      images.value = [];
-    }
-  } else {
+  // Prvo proveri da li je userId dostupan
+  if (!props.userId) {
+    console.log('No user ID provided to fetch images.');
+    images.value = [];
+    return;
+  }
+
+  try {
+    // Koristi postojeći endpoint koji vraća slike po user ID-u
+    const response = await axios.get(`http://localhost:8080/api/images/user/${props.userId}`);
+    images.value = response.data;
+    console.log(`Fetched ${images.value.length} images for user ID: ${props.userId}`);
+  } catch (error) {
+    console.error('Error fetching images:', error);
     images.value = [];
   }
 };
 
-watch(() => props.imageIds, fetchImages, { immediate: true });
+// Slušaj promene na userId prop-u i ponovo dohvati podatke
+watch(() => props.userId, fetchImages, { immediate: true });
 
 const openImagePopup = (image) => {
   currentImage.value = image;
@@ -81,6 +86,7 @@ const formatUploadDate = (dateString) => {
 </script>
 
 <style scoped>
+/* Vaša postojeća stilizacija */
 .user-pictures {
   width: 80%;
   flex-grow: 1;
@@ -101,8 +107,8 @@ const formatUploadDate = (dateString) => {
 }
 
 .image-item {
-  /*width: 266px;*/
-  /*height: 366px;*/
+  width: 100%;
+  height: 433px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -116,6 +122,7 @@ const formatUploadDate = (dateString) => {
   left: 0;
   width: 100%;
   height: 100%;
+  /*height: 260px;*/
   background-color: rgba(0, 0, 0, 0);
   transition: background-color 0.3s ease;
   pointer-events: none;

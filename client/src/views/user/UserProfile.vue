@@ -16,7 +16,7 @@
 
     <div class="line-separator"></div>
 
-    <div class="profile-content">
+    <div class="profile-content" v-if="canViewContent">
       <div class="button-group">
         <button
             class="tab-button"
@@ -31,8 +31,13 @@
         >Posts</button>
       </div>
 
-      <UserPictures v-if="selectedSection === 'pictures'" :imageIds="user.imageIds" />
+      <UserPictures v-if="selectedSection === 'pictures'" :userId="user.id" />
       <UserPosts v-else :userId="user.id" />
+    </div>
+
+    <div v-else class="private-profile-message">
+      <p>This is a private account.</p>
+      <p>You need to be a friend to see their pictures and posts.</p>
     </div>
 
 
@@ -98,16 +103,17 @@ const errorMessage = ref('')
 
 const loggedUser = computed(() => store.state.loggedUser)
 
+// Ovo je ključna computed property koja određuje vidljivost sadržaja
 const canViewContent = computed(() => {
   if (!user.value) return false;
 
-  // Ako profil nije privatan — svi mogu da vide
+  // Ako profil nije privatan, svi mogu da vide
   if (!user.value.privateAccount) return true;
 
-  // Ako je ulogovani korisnik isti kao prikazani korisnik — može da vidi
+  // Ako je ulogovani korisnik isti kao prikazani, može da vidi
   if (loggedUser.value && loggedUser.value.id === user.value.id) return true;
 
-  // Ako je ulogovani korisnik prijatelj prikazanog korisnika — može da vidi
+  // Ako je ulogovani korisnik prijatelj prikazanog korisnika, može da vidi
   if (
       loggedUser.value &&
       user.value.friendListIds &&
@@ -116,11 +122,12 @@ const canViewContent = computed(() => {
     return true;
   }
 
-  // U ostalim slučajevima — ne može da vidi sadržaj
+  // U svim ostalim slučajevima, ne može da vidi sadržaj
   return false;
 })
 
 onMounted(async () => {
+  // Prvo dohvati ID korisnika iz rute, a ako ga nema, koristi ID ulogovanog korisnika
   const userId = route.params.id || store.state.loggedUser?.id
   if (!userId) {
     errorMessage.value = 'Korisnik nije pronađen'
@@ -155,15 +162,37 @@ function togglePopupPost(post) {
   currentPost.value = post || null
 }
 
-onMounted(() => {
-  const userStr = localStorage.getItem('loggedUser')
-  if (userStr) {
-    user.value = new User(JSON.parse(userStr))
-  }
-})
+// Ovu funkciju si imao dva puta, ostavio sam samo jednu u onMounted
+// onMounted(() => {
+//   const userStr = localStorage.getItem('loggedUser')
+//   if (userStr) {
+//     user.value = new User(JSON.parse(userStr))
+//   }
+// })
 </script>
 
 <style scoped>
+/* Dodat je novi stil za poruku o privatnom profilu */
+.private-profile-message {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-top: 30px;
+  color: #777;
+  font-size: 1.2em;
+  line-height: 1.6;
+}
+
+.private-profile-message p:first-child {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.4em;
+  margin-bottom: 10px;
+}
+
+/* Ostala stilizacija je ostala ista kao što si je ti napisao */
 .profile-container {
   display: flex;
   flex-direction: column;
