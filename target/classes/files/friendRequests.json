@@ -1,16 +1,13 @@
-[
-  {
-    "id": "fr_1",
-    "senderId": "user_1",
-    "receiverId": "user_2",
-    "status": "accepted",
-    "date": "2024-06-20T09:00:00Z"
-  },
-  {
-    "id": "fr_2",
-    "senderId": "user_3",
-    "receiverId": "user_1",
-    "status": "pending",
-    "date": "2024-06-26T08:30:00Z"
-  }
-]
+[ {
+  "id" : "fr_1",
+  "senderId" : "user_4",
+  "receiverId" : "user_1",
+  "status" : "accepted",
+  "date" : [ 2024, 6, 29, 11, 14 ]
+}, {
+  "id" : "fr_2",
+  "senderId" : "user_3",
+  "receiverId" : "user_1",
+  "status" : "accepted",
+  "date" : [ 2024, 6, 27, 11, 20 ]
+} ]

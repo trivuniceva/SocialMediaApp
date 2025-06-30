@@ -13,7 +13,7 @@ const routes = [
   { path: '/profile', component: UserProfile },
   { path: '/search', component:SearchUsersView },
   { path: '/edit-profile', component:EditProfile },
-  { path: '/profile/:id', name: 'UserProfile', component: () => import('@/views/user/UserProfile.vue')
+  { path: '/profile/:id?', name: 'UserProfile', component: () => import('@/views/user/UserProfile.vue')
   }
 
 ]
