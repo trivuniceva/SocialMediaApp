@@ -107,8 +107,8 @@ const formatUploadDate = (dateString) => {
 }
 
 .image-item {
-  /*width: 266px;*/
-  /*height: 366px;*/
+  width: 100%;
+  height: 433px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -122,6 +122,7 @@ const formatUploadDate = (dateString) => {
   left: 0;
   width: 100%;
   height: 100%;
+  /*height: 260px;*/
   background-color: rgba(0, 0, 0, 0);
   transition: background-color 0.3s ease;
   pointer-events: none;
