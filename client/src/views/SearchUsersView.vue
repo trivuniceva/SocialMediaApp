@@ -1,38 +1,4 @@
 <template>
-  <div class="user-search">
-    <h2>User Search</h2>
-
-    <div class="search-options">
-      <input v-model="searchName" placeholder="Name:" class="rounded-input" />
-      <input v-model="searchLastName" placeholder="Lastname:" class="rounded-input" />
-
-      <br><br>
-      <label for="startDate">Date of birth from:</label>
-      <input type="date" id="startDate" v-model="startDate" class="rounded-input" />
-
-      <br><br>
-      <label for="endDate">Date of birth to:</label>
-      <input type="date" id="endDate" v-model="endDate" class="rounded-input" />
-
-      <br><br>
-      <button @click="searchUsers" class="rounded-button">Search</button>
-    </div>
-
-    <div class="search-results" v-if="filteredUsers.length">
-      <h3>Search results</h3>
-      <select v-model="sortOption" class="rounded-input">
-        <option value="firstName">Name</option>
-        <option value="lastName">Lastname</option>
-        <option value="dateOfBirth">Date of Birth</option>
-      </select>
-
-      <ul>
-        <li v-for="user in sortedUsers" :key="user.id">
-          <router-link :to="`/profile/${user.id}`" class="user-link">
-            {{ user.firstName }} {{ user.lastName }} - {{ user.dateOfBirth }}
-          </router-link>
-        </li>
-      </ul>
   <div class="user-search-container">
     <h2>Find Users</h2>
 
@@ -114,6 +80,10 @@ const startDate = ref('')
 const endDate = ref('')
 const sortOption = ref('firstName')
 
+// Declare showModal and selectedUser
+const showModal = ref(false)
+const selectedUser = ref(null)
+
 const fetchUsers = async () => {
   const response = await fetch('http://localhost:8080/api/users')
   if (!response.ok) {
@@ -126,8 +96,8 @@ const fetchUsers = async () => {
 
 const searchUsers = () => {
   filteredUsers.value = users.value.filter(user => {
-    const matchName = user.firstName.toLowerCase().includes(searchName.value.toLowerCase())
-    const matchLastName = user.lastName.toLowerCase().includes(searchLastName.value.toLowerCase())
+    const matchName = searchName.value ? user.firstName.toLowerCase().includes(searchName.value.toLowerCase()) : true
+    const matchLastName = searchLastName.value ? user.lastName.toLowerCase().includes(searchLastName.value.toLowerCase()) : true
 
     const userDobStr = user.dateOfBirth;
     const startDobStr = startDate.value;
@@ -148,11 +118,18 @@ const sortedUsers = computed(() => {
     } else if (sortOption.value === 'lastName') {
       return a.lastName.localeCompare(b.lastName)
     } else if (sortOption.value === 'dateOfBirth') {
+      // Assuming dateOfBirth is in a sortable string format like 'YYYY-MM-DD'
       return a.dateOfBirth.localeCompare(b.dateOfBirth)
     }
     return 0
   })
 })
+
+// Function to open the user details modal
+const openUserDetails = (user) => {
+  selectedUser.value = user
+  showModal.value = true
+}
 
 onMounted(() => {
   fetchUsers()

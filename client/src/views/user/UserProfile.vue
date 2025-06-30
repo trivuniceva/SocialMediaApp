@@ -35,7 +35,6 @@
       <UserPosts v-else :userId="user.id" />
     </div>
 
-    <p v-else>Ovaj profil je privatan.</p>
 
     <div v-if="isPopupPostOpen" class="popup-overlay" @click.self="togglePopupPost(null)">
       <div class="popup-window-post">
