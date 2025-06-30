@@ -9,7 +9,7 @@
   "gender" : "Male",
   "role" : "User",
   "profilePicturePath" : "http://localhost:8080/images/profile/macko.jpg",
-  "postIds" : [ "post_1", "post_3" ],
+  "postIds": ["post_1", "post_2", "post_3", "post_4", "post_5", "post_6", "post_7", "post_8"],
   "imageIds" : [ "image_1", "image_2", "image_3", "image_4", "image_5", "image_6" ],
   "friendRequestsSent" : [ "user_3" ],
   "friendRequestsReceived" : [ "user_2" ],

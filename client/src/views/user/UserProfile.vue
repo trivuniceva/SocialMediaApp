@@ -32,7 +32,7 @@
       </div>
 
       <UserPictures v-if="selectedSection === 'pictures'" :imageIds="user.imageIds" />
-      <UserPosts v-else :posts="user.posts" />
+      <UserPosts v-else :userId="user.id" />
     </div>
 
 
@@ -253,10 +253,10 @@ onMounted(() => {
 }
 
 .line-separation {
-  width: 85%;
+  width: 77%;
   height: 1px;
   background-color: #ccc;
-  margin: 0 auto;
+  margin: 2rem auto 0;
 }
 
 .lower-section {
