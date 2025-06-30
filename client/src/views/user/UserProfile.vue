@@ -58,7 +58,7 @@
             @click="selectedSection = 'posts'"
         >Posts</button>
       </div>
-      <UserPictures v-if="selectedSection === 'pictures'" :userId="user.id" @open-image-popup="openImagePopup" />
+      <UserPictures v-if="selectedSection === 'pictures'" :userId="user.id" @open-image-popup="openImagePopup" ref="userPicturesRef" />
       <UserPosts v-else :userId="user.id" />
     </div>
 
@@ -93,7 +93,7 @@
         :isVisible="isImagePopupOpen"
         :image="currentImage"
         @close="closeImagePopup"
-        v-if="isImagePopupOpen && currentImage"
+        @image-deleted="handleImageDeleted" v-if="isImagePopupOpen && currentImage"
     />
 
     <FollowersPopup
@@ -133,6 +133,15 @@ const user = ref(null)
 const friendRequestsReceived = ref([])
 const friendRequestsSent = ref([])
 const errorMessage = ref('')
+
+const userPicturesRef = ref(null);
+
+const handleImageDeleted = (imageId) => {
+  closeImagePopup();
+  if (userPicturesRef.value) {
+    userPicturesRef.value.removeImage(imageId);
+  }
+};
 
 const loggedUser = computed(() => store.state.loggedUser)
 

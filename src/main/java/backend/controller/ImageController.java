@@ -1,7 +1,7 @@
-// ImageController.java
 package backend.controller;
 
 import backend.model.Image;
+import backend.storage.CommentFileStorage;
 import backend.storage.ImageFileStorage;
 import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,9 @@ public class ImageController {
     private ImageFileStorage imageFileStorage;
 
     @Autowired
+    private CommentFileStorage commentFileStorage;
+
+    @Autowired
     private UserFileStorage userFileStorage;
 
     @GetMapping("/user/{userId}")
@@ -30,5 +33,20 @@ public class ImageController {
         List<Image> userImages = imageFileStorage.getImagesByIds(user.getImageIds());
         System.out.println("Found " + userImages.size() + " images for userId: " + userId);
         return userImages;
+    }
+
+    @DeleteMapping("/{imageId}")
+    public void deleteImage(@PathVariable String imageId) {
+        Image imageToDelete = imageFileStorage.findById(imageId);
+
+        if (imageToDelete != null) {
+            System.out.println(imageToDelete.getCommentIds());
+            if (imageToDelete.getCommentIds() != null) {
+                for (String commentId : imageToDelete.getCommentIds()) {
+                    commentFileStorage.deleteComment(commentId);
+                }
+            }
+            imageFileStorage.deleteImage(imageId);
+        }
     }
 }

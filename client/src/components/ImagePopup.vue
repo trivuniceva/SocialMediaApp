@@ -9,6 +9,10 @@
       <div class="info-and-comments-container">
         <p class="close-popup-btn" @click="closePopup">X</p>
 
+        <button v-if="canDeleteImage" @click="deleteImage" class="delete-image-btn">
+          Delete Image
+        </button>
+
         <div class="post-header">
           <div class="user-info">
             <img :src="uploaderProfilePic" :alt="image.uploader" class="user-avatar">
@@ -74,7 +78,8 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['close']);
+// Emitujemo događaj za zatvaranje pop-upa i za brisanje slike
+const emit = defineEmits(['close', 'image-deleted']);
 const store = useStore();
 
 const comments = ref([]);
@@ -83,6 +88,11 @@ const uploaderProfilePic = ref('');
 const commenterProfilePics = ref({});
 
 const loggedUser = computed(() => store.state.loggedUser);
+
+// Nova computed property za proveru da li korisnik može obrisati sliku
+const canDeleteImage = computed(() => {
+  return loggedUser.value && props.image.userId === loggedUser.value.id;
+});
 
 const closePopup = () => {
   emit('close');
@@ -163,12 +173,9 @@ const postComment = async () => {
 
 const canDeleteComment = (comment) => {
   if (!loggedUser.value) {
-    return false; // Nije ulogovan, ne može ništa brisati
+    return false;
   }
-  // Korisnik je ulogovan i...
-  // ...ili je autor komentara
   const isAuthor = comment.userId === loggedUser.value.id;
-  // ...ili je vlasnik objave (slike)
   const isPostOwner = props.image.userId === loggedUser.value.id;
 
   return isAuthor || isPostOwner;
@@ -186,6 +193,26 @@ const deleteComment = async (commentId) => {
     console.log(`Comment with ID ${commentId} has been deleted.`);
   } catch (error) {
     console.error(`Greška pri brisanju komentara sa ID ${commentId}:`, error);
+  }
+};
+
+// Nova funkcija za brisanje slike
+const deleteImage = async () => {
+  if (!confirm('Are you sure you want to delete this image? All comments will be deleted as well.')) {
+    return;
+  }
+  try {
+    await axios.delete(`http://localhost:8080/api/images/${props.image.id}`);
+
+    // Emituj događaj roditeljskoj komponenti da je slika obrisana
+    emit('image-deleted', props.image.id);
+
+    // Zatvori pop-up
+    closePopup();
+
+    console.log(`Image with ID ${props.image.id} and its comments have been deleted.`);
+  } catch (error) {
+    console.error(`Greška pri brisanju slike sa ID ${props.image.id}:`, error);
   }
 };
 
@@ -292,6 +319,26 @@ const formatUploadDate = (dateString) => {
 .close-popup-btn:hover {
   color: #f86b86;
 }
+
+.delete-image-btn {
+  position: absolute;
+  top: 15px;
+  right: 60px; /* Pomeren desno da ne smeta X-u */
+  background-color: #dc3545; /* Crvena boja */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  z-index: 1;
+}
+
+.delete-image-btn:hover {
+  background-color: #c82333;
+}
+
 
 .post-header {
   display: flex;
@@ -462,10 +509,10 @@ const formatUploadDate = (dateString) => {
 .delete-comment-btn {
   background: none;
   border: none;
-  color: #dc3545; /* Crvena boja za brisanje */
+  color: #dc3545;
   font-size: 0.85em;
   font-weight: 600;
-  margin-left: auto; /* Gura dugme skroz desno */
+  margin-left: auto;
   cursor: pointer;
   opacity: 0.8;
   transition: opacity 0.2s ease;
@@ -513,3 +560,4 @@ const formatUploadDate = (dateString) => {
   }
 }
 </style>
+
