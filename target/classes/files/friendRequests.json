@@ -1,3 +1,7 @@
-{
-  
-}
+[ {
+  "id" : "8436efcf-0138-46e1-a7e9-50d74ac69a41",
+  "senderId" : "user_3",
+  "receiverId" : "user_1",
+  "status" : "accepted",
+  "date" : [ 2025, 6, 30, 22, 37, 32, 148636000 ]
+} ]
