@@ -151,5 +151,50 @@
     "commentIds": [],
     "uploadDate": "2024-06-28T19:25:00",
     "logicallyDeleted": false
+  },
+  {
+    "id": "image_18",
+    "userId": "user_4",
+    "path": "/images/user_uploads/image_18.jpg",
+    "text": "Evening bike ride through the park.",
+    "commentIds": [],
+    "uploadDate": "2024-06-28T19:25:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_19",
+    "userId": "user_4",
+    "path": "/images/user_uploads/image_19.jpg",
+    "text": "Evening bike ride through the park.",
+    "commentIds": [],
+    "uploadDate": "2024-06-28T19:25:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_20",
+    "userId": "user_3",
+    "path": "/images/user_uploads/image_20.jpg",
+    "text": "Evening bike ride through the park.",
+    "commentIds": [],
+    "uploadDate": "2024-06-28T19:25:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_21",
+    "userId": "user_3",
+    "path": "/images/user_uploads/image_21.jpg",
+    "text": "Evening bike ride through the park.",
+    "commentIds": [],
+    "uploadDate": "2024-06-28T19:25:00",
+    "logicallyDeleted": false
+  },
+  {
+    "id": "image_22",
+    "userId": "user_3",
+    "path": "/images/user_uploads/image_22.jpg",
+    "text": "Evening bike ride through the park.",
+    "commentIds": [],
+    "uploadDate": "2024-06-28T19:25:00",
+    "logicallyDeleted": false
   }
 ]

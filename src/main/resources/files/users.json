@@ -19,7 +19,7 @@
   "blocked" : false
 }, {
   "id" : "user_2",
-  "username" : "ana_a",
+  "username" : "ana",
   "password" : "sad",
   "emailAddress" : "ana.anic@example.com",
   "firstName" : "Ana",
@@ -57,8 +57,8 @@
   "blocked" : false
 }, {
   "id" : "user_3",
-  "username" : "marko_m",
-  "password" : "test123",
+  "username" : "marko",
+  "password" : "sad",
   "emailAddress" : "marko.markovic@example.com",
   "firstName" : "Marko",
   "lastName" : "Marković",
@@ -76,17 +76,17 @@
   "blocked" : false
 }, {
   "id" : "user_4",
-  "username" : "ivana_i",
-  "password" : "lozinka",
+  "username" : "ivana",
+  "password" : "sad",
   "emailAddress" : "ivana.ivic@example.com",
   "firstName" : "Ivana",
   "lastName" : "Ivić",
   "dateOfBirth" : "1998-12-02",
   "gender" : "Female",
   "role" : "User",
-  "profilePicturePath" : "http://localhost:8080/images/profile/default.jpg",
+  "profilePicturePath" : "http://localhost:8080/images/profile/ivana.jpg",
   "postIds" : [ ],
-  "imageIds" : [ ],
+  "imageIds" : ["image_18", "image_19", "image_20", "image_21","image_22"],
   "friendRequestsSent" : [ ],
   "friendRequestsReceived" : [ "61bababa-e21d-4c70-ab5d-d1cf874fec12", "79abcb31-1abe-4a4c-ba6d-4f4418c2baaf" ],
   "friendListIds" : [ ],
