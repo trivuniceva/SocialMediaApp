@@ -9,9 +9,12 @@
             <strong>{{ user.friendListIds?.length || 0 }} Followers</strong>
           </router-link>
 
-          <router-link to="#" @click.prevent="toggleFriendRequestsPopup" class="followers-link">
-            <strong>{{ pendingRequests.length }} Friend Requests</strong>
-          </router-link>
+          <template v-if="loggedUser && user.id === loggedUser.id">
+            <router-link to="#" @click.prevent="toggleFriendRequestsPopup" class="followers-link">
+              <strong>{{ pendingRequests.length }} Friend Requests</strong>
+            </router-link>
+          </template>
+          
         </div>
         <p class="full-name">{{ user.firstName }} {{ user.lastName }}</p>
         <p class="dob">{{ user.dateOfBirth }}</p>
