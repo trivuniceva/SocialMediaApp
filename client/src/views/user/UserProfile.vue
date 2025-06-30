@@ -129,6 +129,7 @@ const pendingRequests = computed(() =>
 )
 
 async function fetchUserData(id) {
+  // Ako je ID nedefinisan i nema logovanog korisnika, ne radimo ništa
   if (!id) {
     errorMessage.value = 'Korisnik nije pronađen';
     user.value = null;
@@ -158,15 +159,27 @@ async function fetchUserData(id) {
   }
 }
 
+// Inicijalno učitavanje profila
 onMounted(async () => {
-  await fetchUserData(route.params.id || store.state.loggedUser?.id);
+  // Prvo učitajte profil na osnovu ID-a iz rute.
+  // Ako ga nema, probajte ID ulogovanog korisnika.
+  const id = route.params.id || store.state.loggedUser?.id;
+  await fetchUserData(id);
 })
 
-watch(() => route.params.id, async (newId, oldId) => {
-  if (newId !== oldId) {
-    await fetchUserData(newId);
+// Prati promene u parametru rute
+watch(() => route.params.id, async (newId) => {
+  // Odredite ID koji treba da se učita. Ako je `newId` undefined, koristite ID ulogovanog korisnika.
+  const idToFetch = newId || store.state.loggedUser?.id;
+
+  // Proverite da li već prikazujemo isti profil da biste izbegli nepotrebno učitavanje
+  if (user.value?.id === idToFetch) {
+    return;
   }
+
+  await fetchUserData(idToFetch);
 });
+
 
 const isPopupOpen = ref(false)
 const isPopupPostOpen = ref(false)
