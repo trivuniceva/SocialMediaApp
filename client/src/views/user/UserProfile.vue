@@ -153,6 +153,7 @@ const pendingRequests = computed(() =>
     )
 )
 
+// Ažurirana funkcija fetchUserData u <script setup> bloku
 async function fetchUserData(id) {
   if (!id) {
     errorMessage.value = 'Korisnik nije pronađen';
@@ -170,6 +171,7 @@ async function fetchUserData(id) {
     user.value = await response.json()
     errorMessage.value = '';
 
+    // Uvek dohvati primljene zahteve za korisnika čiji se profil gleda
     const receivedRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${id}`);
     if (receivedRequestsResponse.ok) {
       friendRequestsReceived.value = await receivedRequestsResponse.json();
@@ -177,7 +179,9 @@ async function fetchUserData(id) {
       console.error('Failed to load received friend requests', receivedRequestsResponse.status);
     }
 
-    if (loggedUser.value && loggedUser.value.id !== id) {
+    // Ažurirani deo koda: Dohvati poslate zahteve SAMO ako se gleda TUĐI profil
+    // i ako je korisnik ulogovan.
+    if (loggedUser.value && user.value.id !== loggedUser.value.id) {
       const sentRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/sent/${loggedUser.value.id}`);
       if (sentRequestsResponse.ok) {
         friendRequestsSent.value = await sentRequestsResponse.json();
@@ -187,7 +191,7 @@ async function fetchUserData(id) {
     }
 
     if (loggedUser.value && user.value.id === loggedUser.value.id) {
-      friendRequestsSent.value = [];
+      friendRequestsSent.value = []; 
     }
 
 

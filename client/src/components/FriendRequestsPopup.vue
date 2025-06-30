@@ -1,33 +1,80 @@
 <template>
   <div class="popup-overlay" @click.self="$emit('close')">
     <div class="popup-window">
-      <h3>Friend Requests</h3>
-      <div v-if="requests.length > 0">
-        <div v-for="req in requests" :key="req.id" class="follower-item">
-          <span>{{ getUsernameById(req.senderId) }}</span>
-          <div>
-            <button class="remove-follower-button" @click="$emit('accept', req.id)">Accept</button>
-            <button class="remove-follower-button" @click="$emit('reject', req.id)">Reject</button>
-          </div>
-        </div>
-      </div>
-      <div v-else>
-        <p>No pending requests.</p>
+      <button class="close-popup-button" @click="$emit('close')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <h3 class="popup-title">Friend Requests</h3>
+      <div class="follower-list-container">
+        <ul v-if="requestsWithDetails.length">
+          <li v-for="req in requestsWithDetails" :key="req.id" class="follower-item">
+            <span class="follower-name" @click.prevent="openProfile(req.senderId)">
+              {{ req.senderDetails.firstName }} {{ req.senderDetails.lastName }}
+            </span>
+            <div>
+              <button class="remove-follower-button" @click.stop="$emit('accept', req.id)">Accept</button>
+              <button class="remove-follower-button" @click.stop="$emit('reject', req.id)">Reject</button>
+            </div>
+          </li>
+        </ul>
+        <p v-else-if="isLoading" class="loading-message">Loading requests...</p>
+        <p v-else class="no-followers-message">No pending requests.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-defineProps(['requests'])
-defineEmits(['close', 'accept', 'reject'])
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-function getUsernameById(id) {
-  return id
+const props = defineProps({
+  requests: {
+    type: Array,
+    required: true
+  }
+})
+
+const emit = defineEmits(['close', 'accept', 'reject'])
+const router = useRouter()
+const requestsWithDetails = ref([])
+const isLoading = ref(true)
+
+const fetchUserDetails = async (userId) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/users/${userId}`)
+    if (response.ok) {
+      return await response.json()
+    }
+  } catch (error) {
+    console.error(`Failed to fetch details for user ${userId}:`, error)
+    return null
+  }
+}
+
+onMounted(async () => {
+  if (props.requests.length > 0) {
+    const promises = props.requests.map(async (req) => {
+      const userDetails = await fetchUserDetails(req.senderId)
+      return userDetails ? { ...req, senderDetails: userDetails } : null
+    })
+    const results = await Promise.all(promises)
+    requestsWithDetails.value = results.filter(req => req !== null)
+  }
+  isLoading.value = false
+})
+
+function openProfile(userId) {
+  emit('close')
+  router.push({ name: 'UserProfile', params: { id: userId } })
 }
 </script>
 
 <style scoped>
+/* Sav CSS kod iz vase komponente za followere, ovde se prekopira */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -127,6 +174,7 @@ function getUsernameById(id) {
   font-size: 1.1em;
   color: #333;
   font-weight: 500;
+  cursor: pointer; /* Dodajemo pointer kursor */
 }
 
 .remove-follower-button {
