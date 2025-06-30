@@ -7,14 +7,15 @@
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
-      <h3 class="popup-title">Followers</h3>
+      <h3 class="popup-title">Followers <3</h3>
       <div class="follower-list-container">
-        <ul v-if="followers.length">
-          <li v-for="(follower, index) in followers" :key="index" class="follower-item">
-            <span class="follower-name">{{ follower }}</span>
-            <button class="remove-follower-button" @click="$emit('remove', follower)">Remove</button>
+        <ul v-if="followersWithDetails.length">
+          <li v-for="follower in followersWithDetails" :key="follower.id" class="follower-item" @click.prevent="openProfile(follower.id)">
+            <span class="follower-name">{{ follower.firstName }} {{ follower.lastName }}</span>
+            <button class="remove-follower-button" @click.stop="$emit('remove', follower.id)">Remove</button>
           </li>
         </ul>
+        <p v-else-if="isLoading" class="loading-message">Loading followers...</p>
         <p v-else class="no-followers-message">No followers yet.</p>
       </div>
     </div>
@@ -22,9 +23,12 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const props = defineProps({
   followers: {
-    type: Array,
+    type: Array, // Ovo je sada niz ID-eva
     required: true
   },
   close: {
@@ -32,6 +36,38 @@ defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['remove'])
+
+const router = useRouter()
+const followersWithDetails = ref([])
+const isLoading = ref(true)
+
+const fetchFollowerDetails = async (followerId) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/users/${followerId}`)
+    if (response.ok) {
+      return await response.json()
+    }
+  } catch (error) {
+    console.error(`Failed to fetch details for follower ${followerId}:`, error)
+    return null
+  }
+}
+
+onMounted(async () => {
+  if (props.followers.length > 0) {
+    const promises = props.followers.map(id => fetchFollowerDetails(id))
+    const results = await Promise.all(promises)
+    followersWithDetails.value = results.filter(user => user !== null)
+  }
+  isLoading.value = false
+})
+
+function openProfile(followerId) {
+  props.close()
+  router.push({ name: 'UserProfile', params: { id: followerId } })
+}
 </script>
 
 <style scoped>

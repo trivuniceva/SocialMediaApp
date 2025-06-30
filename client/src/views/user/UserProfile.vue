@@ -1,7 +1,7 @@
 <template>
   <div v-if="user" class="profile-container">
     <div class="profile-header">
-      <img class="profile-pic" v-if="user.profilePicturePath" :src="user.profilePicturePath" alt="Profile Picture">
+      <img class="profile-pic" v-if="user.profilePicturePath" :src="user.profilePicturePath" alt="Profile Picture" />
       <div class="profile-info">
         <div class="profile-username">
           <h3>{{ user.username }}</h3>
@@ -12,7 +12,6 @@
           <router-link to="#" @click.prevent="toggleFriendRequestsPopup" class="followers-link">
             <strong>{{ pendingRequests.length }} Friend Requests</strong>
           </router-link>
-
         </div>
         <p class="full-name">{{ user.firstName }} {{ user.lastName }}</p>
         <p class="dob">{{ user.dateOfBirth }}</p>
@@ -45,16 +44,15 @@
       <p>You need to be a friend to see their pictures and posts.</p>
     </div>
 
-
     <div v-if="isPopupPostOpen" class="popup-overlay" @click.self="togglePopupPost(null)">
       <div class="popup-window-post">
         <div class="picture-section">
-          <img :src="currentImage" alt="Post Image">
+          <img :src="currentImage" alt="Post Image" />
         </div>
         <div class="right-side">
           <div class="user-info-section">
             <button @click="togglePopupPost(null)" class="close-post-button">
-              <img src="/img/icons/closeIcon.png" alt="Close">
+              <img src="/img/icons/closeIcon.png" alt="Close" />
             </button>
             <p>{{ user.firstName }}</p>
           </div>
@@ -82,9 +80,6 @@
         @accept="handleAcceptRequest"
         @reject="handleRejectRequest"
     />
-
-
-
   </div>
 
   <div v-else class="loading-message">
@@ -93,95 +88,92 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import User from '@/models/User'
 import UserPictures from './UserPictures.vue'
 import UserPosts from './UserPosts.vue'
-import FollowersPopup from "@/components/FollowersPopup.vue";
-import FriendRequestsPopup from "@/components/FriendRequestsPopup.vue";
+import FollowersPopup from "@/components/FollowersPopup.vue"
+import FriendRequestsPopup from "@/components/FriendRequestsPopup.vue"
 
 const store = useStore()
 const route = useRoute()
 const user = ref(null)
 const friendRequests = ref([])
-
 const errorMessage = ref('')
 
 const loggedUser = computed(() => store.state.loggedUser)
 
 const canViewContent = computed(() => {
-  if (!user.value) return false;
+  if (!user.value) return false
 
-  // Ako profil nije privatan, svi mogu da vide
-  if (!user.value.privateAccount) return true;
+  if (!user.value.privateAccount) return true
 
-  // Ako je ulogovani korisnik isti kao prikazani, može da vidi
-  if (loggedUser.value && loggedUser.value.id === user.value.id) return true;
+  if (loggedUser.value && loggedUser.value.id === user.value.id) return true
 
-  // Ako je ulogovani korisnik prijatelj prikazanog korisnika, može da vidi
   if (
       loggedUser.value &&
       user.value.friendListIds &&
       user.value.friendListIds.includes(loggedUser.value.id)
   ) {
-    return true;
+    return true
   }
 
-  // U svim ostalim slučajevima, ne može da vidi sadržaj
-  return false;
+  return false
 })
 
-
 const pendingRequests = computed(() =>
-    friendRequests.value.filter(req =>
-        req.receiverId === user.value?.id && req.status === 'pending'
+    friendRequests.value.filter(
+        req => req.receiverId === user.value?.id && req.status === 'pending'
     )
 )
 
-const userId = route.params.id || store.state.loggedUser?.id
-console.log("User ID za zahteve:", userId);
-
-
-
-onMounted(async () => {
-  // Prvo dohvati ID korisnika iz rute, a ako ga nema, koristi ID ulogovanog korisnika
-  const userId = route.params.id || store.state.loggedUser?.id
-  if (!userId) {
-    errorMessage.value = 'Korisnik nije pronađen'
-    return
+async function fetchUserData(id) {
+  if (!id) {
+    errorMessage.value = 'Korisnik nije pronađen';
+    user.value = null;
+    return;
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/api/users/${userId}`)
+    const response = await fetch(`http://localhost:8080/api/users/${id}`)
     if (!response.ok) {
       errorMessage.value = 'Korisnik nije pronađen'
+      user.value = null;
       return
     }
     user.value = await response.json()
+    errorMessage.value = '';
+
+    const requestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${id}`);
+    if (requestsResponse.ok) {
+      friendRequests.value = await requestsResponse.json();
+    } else {
+      console.error('Failed to load friend requests', requestsResponse.status);
+    }
   } catch (error) {
     errorMessage.value = 'Greška prilikom učitavanja korisnika'
+    user.value = null;
+    console.error('Fetch error:', error);
   }
+}
 
-  const response = await fetch(`http://localhost:8080/api/friend-requests/received/${userId}`)
-
-  if (response.ok) {
-    const data = await response.json();
-    console.log("Friend requests from backend:", data);
-    friendRequests.value = data;
-  } else {
-    console.error("Failed to load friend requests", response.status);
-  }
-
-
+onMounted(async () => {
+  await fetchUserData(route.params.id || store.state.loggedUser?.id);
 })
+
+watch(() => route.params.id, async (newId, oldId) => {
+  if (newId !== oldId) {
+    await fetchUserData(newId);
+  }
+});
 
 const isPopupOpen = ref(false)
 const isPopupPostOpen = ref(false)
 const currentImage = ref('')
 const currentPost = ref(null)
 const selectedSection = ref('pictures')
+const isFriendRequestsPopupOpen = ref(false)
 
 function togglePopup() {
   isPopupOpen.value = !isPopupOpen.value
@@ -192,9 +184,6 @@ function togglePopupPost(post) {
   currentImage.value = post?.picturePath || ''
   currentPost.value = post || null
 }
-
-
-const isFriendRequestsPopupOpen = ref(false)
 
 function toggleFriendRequestsPopup() {
   isFriendRequestsPopupOpen.value = !isFriendRequestsPopupOpen.value
@@ -216,25 +205,25 @@ async function handleRejectRequest(requestId) {
 
 async function handleRemoveFriend(friendId) {
   try {
-    const response = await fetch(`http://localhost:8080/api/users/${user.value.id}/remove-friend/${friendId}`, {
-      method: 'POST',
-    });
+    const response = await fetch(
+        `http://localhost:8080/api/users/${user.value.id}/remove-friend/${friendId}`,
+        {
+          method: 'POST',
+        }
+    )
     if (response.ok) {
-      user.value.friendListIds = user.value.friendListIds.filter(id => id !== friendId);
+      user.value.friendListIds = user.value.friendListIds.filter(id => id !== friendId)
     } else {
-      console.error("Failed to remove friend", response.status);
+      console.error('Failed to remove friend', response.status)
     }
   } catch (error) {
-    console.error("Error removing friend", error);
+    console.error('Error removing friend', error)
   }
 }
-
-
-
 </script>
 
+
 <style scoped>
-/* Dodat je novi stil za poruku o privatnom profilu */
 .private-profile-message {
   text-align: center;
   padding: 40px 20px;
