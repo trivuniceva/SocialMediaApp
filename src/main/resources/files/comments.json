@@ -1,22 +1,145 @@
-[
-  {
-    "id": "comment_1",
-    "objectId": "post_1",
-    "objectType": "Post",
-    "userId": "user_2",
-    "text": "Beautiful! Where was this taken?",
-    "commentDate": "2024-06-26T11:00:00Z",
-    "editDate": null,
-    "logicallyDeleted": false
-  },
-  {
-    "id": "comment_2",
-    "objectId": "post_3",
-    "objectType": "Post",
-    "userId": "user_4",
-    "text": "Looks great! Can I get the recipe?",
-    "commentDate": "2024-06-25T19:15:00Z",
-    "editDate": "2024-06-25T19:30:00Z",
-    "logicallyDeleted": false
-  }
-]
+[ {
+  "id" : "comment_1",
+  "objectId" : "image_1",
+  "objectType" : "IMAGE",
+  "userId" : "user_3",
+  "text" : "Wow, this view is breathtaking! I love the light.",
+  "commentDate" : [ 2024, 6, 25, 9, 15 ],
+  "editDate" : null,
+  "logicallyDeleted" : true
+}, {
+  "id" : "comment_2",
+  "objectId" : "image_1",
+  "objectType" : "IMAGE",
+  "userId" : "user_2",
+  "text" : "Absolutely stunning! Wish I was there.",
+  "commentDate" : [ 2024, 6, 25, 11, 30 ],
+  "editDate" : null,
+  "logicallyDeleted" : true
+}, {
+  "id" : "comment_3",
+  "objectId" : "image_2",
+  "objectType" : "IMAGE",
+  "userId" : "user_4",
+  "text" : "Such a peaceful photo. The colors are beautiful.",
+  "commentDate" : [ 2024, 6, 26, 9, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_4",
+  "objectId" : "image_3",
+  "objectType" : "IMAGE",
+  "userId" : "user_2",
+  "text" : "So much green! I feel relaxed just looking at it.",
+  "commentDate" : [ 2024, 6, 26, 12, 45 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_5",
+  "objectId" : "image_4",
+  "objectType" : "IMAGE",
+  "userId" : "user_3",
+  "text" : "Amazing reflection! Great capture.",
+  "commentDate" : [ 2024, 6, 27, 9, 20 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_6",
+  "objectId" : "image_7",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "Love this cozy vibe! What book is that?",
+  "commentDate" : [ 2024, 6, 27, 14, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_7",
+  "objectId" : "image_7",
+  "objectType" : "IMAGE",
+  "userId" : "user_4",
+  "text" : "Perfect weekend plans!",
+  "commentDate" : [ 2024, 6, 28, 10, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_8",
+  "objectId" : "image_8",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "Awesome street photo!",
+  "commentDate" : [ 2024, 6, 26, 11, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_9",
+  "objectId" : "image_12",
+  "objectType" : "IMAGE",
+  "userId" : "user_3",
+  "text" : "Looks like a fun ride! Great shot!",
+  "commentDate" : [ 2024, 6, 29, 10, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "comment_10",
+  "objectId" : "image_13",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "This reminds me of a film scene.",
+  "commentDate" : [ 2024, 6, 29, 12, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : true
+}, {
+  "id" : "comment_11",
+  "objectId" : "image_14",
+  "objectType" : "IMAGE",
+  "userId" : "user_4",
+  "text" : "Beautifully edited. Love the tones.",
+  "commentDate" : [ 2024, 6, 30, 9, 0 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "9563a41f-5a2b-4d1d-820c-f0b4ff1fbfbe",
+  "objectId" : "image_18",
+  "objectType" : "IMAGE",
+  "userId" : "user_2",
+  "text" : "<3",
+  "commentDate" : [ 2025, 6, 30, 22, 1, 45, 720000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "af7a55b5-6fe3-4655-bed7-3fdc542417f1",
+  "objectId" : "image_13",
+  "objectType" : "IMAGE",
+  "userId" : "user_2",
+  "text" : "top",
+  "commentDate" : [ 2025, 6, 30, 22, 2, 31, 263000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "de10f398-afea-4f52-81c3-80f93c169f07",
+  "objectId" : "image_13",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "<3",
+  "commentDate" : [ 2025, 6, 30, 22, 5, 43, 908000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : true
+}, {
+  "id" : "32a03cb2-7fe1-469c-a311-1e99017d975b",
+  "objectId" : "image_13",
+  "objectType" : "IMAGE",
+  "userId" : "user_3",
+  "text" : "hvalaa",
+  "commentDate" : [ 2025, 6, 30, 22, 5, 59, 362000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
+}, {
+  "id" : "f2baa7d6-5954-43a0-89b0-8723255b0aea",
+  "objectId" : "image_13",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "bas kida",
+  "commentDate" : [ 2025, 6, 30, 22, 11, 59, 91000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : true
+} ]

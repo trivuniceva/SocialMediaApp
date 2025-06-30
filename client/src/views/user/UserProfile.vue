@@ -58,7 +58,7 @@
             @click="selectedSection = 'posts'"
         >Posts</button>
       </div>
-      <UserPictures v-if="selectedSection === 'pictures'" :userId="user.id" />
+      <UserPictures v-if="selectedSection === 'pictures'" :userId="user.id" @open-image-popup="openImagePopup" />
       <UserPosts v-else :userId="user.id" />
     </div>
 
@@ -89,6 +89,13 @@
       </div>
     </div>
 
+    <ImagePopup
+        :isVisible="isImagePopupOpen"
+        :image="currentImage"
+        @close="closeImagePopup"
+        v-if="isImagePopupOpen && currentImage"
+    />
+
     <FollowersPopup
         v-if="isPopupOpen && loggedUser && user.id === loggedUser.id"
         :followers="user.friendListIds || []"
@@ -118,27 +125,25 @@ import UserPictures from './UserPictures.vue'
 import UserPosts from './UserPosts.vue'
 import FollowersPopup from "@/components/FollowersPopup.vue"
 import FriendRequestsPopup from "@/components/FriendRequestsPopup.vue"
+import ImagePopup from "@/components/ImagePopup.vue";
 
 const store = useStore()
 const route = useRoute()
 const user = ref(null)
-const friendRequestsReceived = ref([]) // Requests that the LOGGED-IN user has received
-const friendRequestsSent = ref([]) // Requests that the LOGGED-IN user has sent
+const friendRequestsReceived = ref([])
+const friendRequestsSent = ref([])
 const errorMessage = ref('')
 
 const loggedUser = computed(() => store.state.loggedUser)
 
-// This function checks if the logged-in user is already friends with the profile user.
 const isFriend = (userId) => {
   return loggedUser.value?.friendListIds?.includes(userId)
 }
 
-// This function checks if the logged-in user has sent a request to the profile user.
 const hasSentRequest = (userId) => {
   return friendRequestsSent.value.some(req => req.receiverId === userId && req.status === 'pending')
 }
 
-// This function checks if the profile user has sent a request to the logged-in user.
 const hasReceivedRequest = (userId) => {
   return friendRequestsReceived.value.some(req => req.senderId === userId && req.status === 'pending')
 }
@@ -176,8 +181,6 @@ async function fetchUserData(id) {
     user.value = await userResponse.json()
     errorMessage.value = '';
 
-    // --- KLJUČNA IZMENA: Dohvati zahteve za LOGGED USER, ne za user na profilu ---
-    // Dohvatanje primljenih zahteva za ulogovanog korisnika
     if (loggedUser.value) {
       const receivedRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/received/${loggedUser.value.id}`);
       if (receivedRequestsResponse.ok) {
@@ -185,8 +188,6 @@ async function fetchUserData(id) {
       } else {
         console.error('Failed to load received friend requests for logged user', receivedRequestsResponse.status);
       }
-
-      // Dohvatanje poslatih zahteva od ulogovanog korisnika
       const sentRequestsResponse = await fetch(`http://localhost:8080/api/friend-requests/sent/${loggedUser.value.id}`);
       if (sentRequestsResponse.ok) {
         friendRequestsSent.value = await sentRequestsResponse.json();
@@ -194,7 +195,6 @@ async function fetchUserData(id) {
         console.error('Failed to load sent friend requests for logged user', sentRequestsResponse.status);
       }
     } else {
-      // Ako korisnik nije ulogovan, isprazi liste zahteva
       friendRequestsReceived.value = [];
       friendRequestsSent.value = [];
     }
@@ -219,13 +219,15 @@ watch(() => route.params.id, async (newId) => {
   await fetchUserData(idToFetch);
 });
 
+// --- Nova stanja za pop-up slike ---
+const isImagePopupOpen = ref(false);
+const currentImage = ref(null);
 
 const isPopupOpen = ref(false)
 const isPopupPostOpen = ref(false)
-const currentImage = ref('')
-const currentPost = ref(null)
 const selectedSection = ref('pictures')
 const isFriendRequestsPopupOpen = ref(false)
+const currentPost = ref(null)
 
 function togglePopup() {
   isPopupOpen.value = !isPopupOpen.value
@@ -240,6 +242,19 @@ function togglePopupPost(post) {
 function toggleFriendRequestsPopup() {
   isFriendRequestsPopupOpen.value = !isFriendRequestsPopupOpen.value
 }
+
+// --- Funkcije za pop-up slike ---
+const openImagePopup = (image) => {
+  // Dodaj ime korisnika u objekat slike
+  // Možeš koristiti user.value.username kao uploader
+  currentImage.value = { ...image, uploader: user.value?.username || 'Unknown User' };
+  isImagePopupOpen.value = true;
+};
+
+const closeImagePopup = () => {
+  isImagePopupOpen.value = false;
+  currentImage.value = null;
+};
 
 async function sendFriendRequest(receiverId) {
   if (!loggedUser.value) return;
@@ -262,7 +277,6 @@ async function sendFriendRequest(receiverId) {
   }
 }
 
-// IZMENJENA FUNKCIJA
 async function acceptFriendRequest(senderId) {
   const requestToAccept = friendRequestsReceived.value.find(
       req => req.senderId === senderId && req.receiverId === loggedUser.value.id && req.status === 'pending'
@@ -289,7 +303,6 @@ async function acceptFriendRequest(senderId) {
   }
 }
 
-// IZMENJENA FUNKCIJA
 async function rejectFriendRequest(senderId) {
   const requestToReject = friendRequestsReceived.value.find(
       req => req.senderId === senderId && req.receiverId === loggedUser.value.id && req.status === 'pending'
@@ -308,7 +321,6 @@ async function rejectFriendRequest(senderId) {
   }
 }
 
-// IZMENJENA FUNKCIJA
 async function handleAcceptRequest(requestId) {
   try {
     const response = await fetch(`http://localhost:8080/api/friend-requests/accept/${requestId}`, { method: 'POST' });
@@ -323,7 +335,6 @@ async function handleAcceptRequest(requestId) {
   }
 }
 
-// IZMENJENA FUNKCIJA
 async function handleRejectRequest(requestId) {
   try {
     const response = await fetch(`http://localhost:8080/api/friend-requests/reject/${requestId}`, { method: 'POST' });
@@ -337,7 +348,6 @@ async function handleRejectRequest(requestId) {
     console.error('Error rejecting request', error);
   }
 }
-
 
 async function handleRemoveFriend(friendId) {
   try {
@@ -364,6 +374,7 @@ async function handleRemoveFriend(friendId) {
     console.error('Error removing friend', error)
   }
 }
+
 </script>
 
 <style scoped>
