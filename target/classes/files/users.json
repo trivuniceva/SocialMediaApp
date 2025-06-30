@@ -86,7 +86,7 @@
   "role" : "User",
   "profilePicturePath" : "http://localhost:8080/images/profile/ivana.jpg",
   "postIds" : [ ],
-  "imageIds" : [ "image_18", "image_19", "image_20", "image_21", "image_22" ],
+  "imageIds" : [ "image_18", "image_19", "image_20", "image_21", "image_22", "3504b742-f89c-4a89-9824-26d6ace1f3ba", "fc3d24fc-9a4c-4fb7-8f3d-82bfee9ed0a0" ],
   "friendRequestsSent" : [ ],
   "friendRequestsReceived" : [ "61bababa-e21d-4c70-ab5d-d1cf874fec12", "79abcb31-1abe-4a4c-ba6d-4f4418c2baaf" ],
   "friendListIds" : [ ],

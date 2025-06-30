@@ -12,6 +12,7 @@
       <router-link to="/profile">Profile</router-link> |
       <router-link to="/edit-profile">Edit Profile</router-link> |
       <router-link to="/add-image">Add Image</router-link> |
+      <router-link to="/add-post">Add Post</router-link> |
       <a href="#" @click.prevent="logout">Logout</a>
 
     </nav>

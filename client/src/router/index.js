@@ -6,6 +6,7 @@ import SignupView from "@/views/auth/SignupView.vue";
 import SearchUsersView from "@/views/SearchUsersView.vue";
 import EditProfile from "@/views/user/EditProfile.vue";
 import AddImage from "@/views/AddImage.vue";
+import AddPost from "@/views/AddPost.vue";
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -16,6 +17,7 @@ const routes = [
   { path: '/edit-profile', component:EditProfile },
   { path: '/profile/:id?', name: 'UserProfile', component: () => import('@/views/user/UserProfile.vue')},
   { path: '/add-image', name: 'add-image', component:AddImage, meta: { requiresAuth: true } },
+  { path: '/add-post', name: 'add-post', component:AddPost, meta: { requiresAuth: true } },
 
 ]
 
