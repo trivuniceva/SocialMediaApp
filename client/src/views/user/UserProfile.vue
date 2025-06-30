@@ -200,14 +200,14 @@ function toggleFriendRequestsPopup() {
 }
 
 async function handleAcceptRequest(requestId) {
-  await fetch(`http://localhost:8080/api/friend-requests/${requestId}/accept`, { method: 'POST' })
+  await fetch(`http://localhost:8080/api/friend-requests/accept/${requestId}`, { method: 'POST' })
   friendRequests.value = friendRequests.value.map(req =>
       req.id === requestId ? { ...req, status: 'accepted' } : req
   )
 }
 
 async function handleRejectRequest(requestId) {
-  await fetch(`http://localhost:8080/api/friend-requests/${requestId}/reject`, { method: 'POST' })
+  await fetch(`http://localhost:8080/api/friend-requests/reject/${requestId}`, { method: 'POST' })
   friendRequests.value = friendRequests.value.map(req =>
       req.id === requestId ? { ...req, status: 'rejected' } : req
   )
