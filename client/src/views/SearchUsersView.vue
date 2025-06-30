@@ -43,7 +43,7 @@
           <li
               v-for="user in sortedUsers"
               :key="user.id"
-              @click="openUserDetails(user)"
+              @click="navigateToUserProfile(user.id)"
               class="user-list-item"
           >
             <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
@@ -56,21 +56,15 @@
       <p v-else class="initial-message">Enter criteria and click Search to find users.</p>
     </div>
   </div>
-
-  <UserDetailsModal
-      v-if="showModal"
-      :user="selectedUser"
-      :currentUser="store.state.loggedUser"
-      @close="showModal = false"
-  />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import UserDetailsModal from "@/components/UserDetailsModal.vue";
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const router = useRouter() // Use the useRouter composable
 const users = ref([])
 const filteredUsers = ref([])
 
@@ -79,10 +73,6 @@ const searchLastName = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const sortOption = ref('firstName')
-
-// Declare showModal and selectedUser
-const showModal = ref(false)
-const selectedUser = ref(null)
 
 const fetchUsers = async () => {
   const response = await fetch('http://localhost:8080/api/users')
@@ -125,10 +115,9 @@ const sortedUsers = computed(() => {
   })
 })
 
-// Function to open the user details modal
-const openUserDetails = (user) => {
-  selectedUser.value = user
-  showModal.value = true
+// Function to navigate to the user profile page
+const navigateToUserProfile = (userId) => {
+  router.push({ name: 'UserProfile', params: { id: userId } })
 }
 
 onMounted(() => {
@@ -137,6 +126,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Stilizacija ostaje ista */
 .user-search-container {
   text-align: center;
   padding: 30px;
