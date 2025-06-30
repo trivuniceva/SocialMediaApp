@@ -45,4 +45,9 @@ public class UserService {
         userFileStorage.updateUser(updatedUser);
 
     }
+
+    public User findUserById(String id) {
+        return userFileStorage.findById(id);
+    }
+
 }

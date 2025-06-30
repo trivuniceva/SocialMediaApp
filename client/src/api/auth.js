@@ -1,4 +1,3 @@
-
 export async function loginUser(credentials) {
     const response = await fetch('http://localhost:8080/api/login', {
         method: 'POST',
@@ -10,4 +9,3 @@ export async function loginUser(credentials) {
     }
     return await response.json();
 }
-

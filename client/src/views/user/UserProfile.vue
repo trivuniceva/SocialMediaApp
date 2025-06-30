@@ -35,6 +35,8 @@
       <UserPosts v-else :userId="user.id" />
     </div>
 
+    <p v-else>Ovaj profil je privatan.</p>
+
     <div v-if="isPopupPostOpen" class="popup-overlay" @click.self="togglePopupPost(null)">
       <div class="popup-window-post">
         <div class="picture-section">
@@ -81,12 +83,63 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+
 import User from '@/models/User'
 import UserPictures from './UserPictures.vue'
 import UserPosts from './UserPosts.vue'
 
+const store = useStore()
+const route = useRoute()
 const user = ref(null)
+
+const errorMessage = ref('')
+
+const loggedUser = computed(() => store.state.loggedUser)
+
+const canViewContent = computed(() => {
+  if (!user.value) return false;
+
+  // Ako profil nije privatan — svi mogu da vide
+  if (!user.value.privateAccount) return true;
+
+  // Ako je ulogovani korisnik isti kao prikazani korisnik — može da vidi
+  if (loggedUser.value && loggedUser.value.id === user.value.id) return true;
+
+  // Ako je ulogovani korisnik prijatelj prikazanog korisnika — može da vidi
+  if (
+      loggedUser.value &&
+      user.value.friendListIds &&
+      user.value.friendListIds.includes(loggedUser.value.id)
+  ) {
+    return true;
+  }
+
+  // U ostalim slučajevima — ne može da vidi sadržaj
+  return false;
+})
+
+onMounted(async () => {
+  const userId = route.params.id || store.state.loggedUser?.id
+  if (!userId) {
+    errorMessage.value = 'Korisnik nije pronađen'
+    return
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/users/${userId}`)
+    if (!response.ok) {
+      errorMessage.value = 'Korisnik nije pronađen'
+      return
+    }
+    user.value = await response.json()
+  } catch (error) {
+    errorMessage.value = 'Greška prilikom učitavanja korisnika'
+  }
+})
+
 const isPopupOpen = ref(false)
 const isPopupPostOpen = ref(false)
 const currentImage = ref('')

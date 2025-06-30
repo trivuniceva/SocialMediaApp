@@ -1,4 +1,38 @@
 <template>
+  <div class="user-search">
+    <h2>User Search</h2>
+
+    <div class="search-options">
+      <input v-model="searchName" placeholder="Name:" class="rounded-input" />
+      <input v-model="searchLastName" placeholder="Lastname:" class="rounded-input" />
+
+      <br><br>
+      <label for="startDate">Date of birth from:</label>
+      <input type="date" id="startDate" v-model="startDate" class="rounded-input" />
+
+      <br><br>
+      <label for="endDate">Date of birth to:</label>
+      <input type="date" id="endDate" v-model="endDate" class="rounded-input" />
+
+      <br><br>
+      <button @click="searchUsers" class="rounded-button">Search</button>
+    </div>
+
+    <div class="search-results" v-if="filteredUsers.length">
+      <h3>Search results</h3>
+      <select v-model="sortOption" class="rounded-input">
+        <option value="firstName">Name</option>
+        <option value="lastName">Lastname</option>
+        <option value="dateOfBirth">Date of Birth</option>
+      </select>
+
+      <ul>
+        <li v-for="user in sortedUsers" :key="user.id">
+          <router-link :to="`/profile/${user.id}`" class="user-link">
+            {{ user.firstName }} {{ user.lastName }} - {{ user.dateOfBirth }}
+          </router-link>
+        </li>
+      </ul>
   <div class="user-search-container">
     <h2>Find Users</h2>
 
@@ -73,8 +107,6 @@ import UserDetailsModal from "@/components/UserDetailsModal.vue";
 const store = useStore()
 const users = ref([])
 const filteredUsers = ref([])
-const selectedUser = ref(null)
-const showModal = ref(false)
 
 const searchName = ref('')
 const searchLastName = ref('')
@@ -83,7 +115,7 @@ const endDate = ref('')
 const sortOption = ref('firstName')
 
 const fetchUsers = async () => {
-  const response = await fetch('http://172.20.10.4:8080/api/users')
+  const response = await fetch('http://localhost:8080/api/users')
   if (!response.ok) {
     console.error('Ne mogu da učitam korisnike')
     return
@@ -121,11 +153,6 @@ const sortedUsers = computed(() => {
     return 0
   })
 })
-
-const openUserDetails = (user) => {
-  selectedUser.value = user
-  showModal.value = true
-}
 
 onMounted(() => {
   fetchUsers()
@@ -214,6 +241,15 @@ h3 {
   background-repeat: no-repeat;
   background-position: right 15px center;
   background-size: 16px;
+}
+
+.user-link {
+  text-decoration: none;
+  color: #2c3e50;
+}
+
+.user-link:hover {
+  color: #F8AFB4;
 }
 
 .rounded-button {

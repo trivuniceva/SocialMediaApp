@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.InputStream;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://172.20.10.4:5173")
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -44,6 +44,17 @@ public class UserController {
         userService.updateUserInfo(id, updatedUser);
         return ResponseEntity.ok(updatedUser);
     }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable String id) {
+        User user = userService.findUserById(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
 }
