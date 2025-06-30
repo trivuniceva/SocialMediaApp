@@ -13,7 +13,7 @@
   "imageIds" : [ "image_1", "image_2", "image_3", "image_4", "image_5", "image_6" ],
   "friendRequestsSent" : [ "user_3" ],
   "friendRequestsReceived" : [ "user_4" ],
-  "friendListIds" : [ "user_2", "user_3" ],
+  "friendListIds" : [ "user_2" ],
   "privateAccount" : false,
   "logicallyDeleted" : false,
   "blocked" : false
@@ -70,7 +70,7 @@
   "imageIds" : [ ],
   "friendRequestsSent" : [ ],
   "friendRequestsReceived" : [ ],
-  "friendListIds" : [ "user_1" ],
+  "friendListIds" : [ ],
   "privateAccount" : false,
   "logicallyDeleted" : false,
   "blocked" : false

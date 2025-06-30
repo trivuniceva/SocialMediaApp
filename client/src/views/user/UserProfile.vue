@@ -72,6 +72,7 @@
         v-if="isPopupOpen"
         :followers="user.friendListIds || []"
         :close="togglePopup"
+        @remove="handleRemoveFriend"
     />
 
     <FriendRequestsPopup
@@ -212,6 +213,23 @@ async function handleRejectRequest(requestId) {
       req.id === requestId ? { ...req, status: 'rejected' } : req
   )
 }
+
+async function handleRemoveFriend(friendId) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/users/${user.value.id}/remove-friend/${friendId}`, {
+      method: 'POST',
+    });
+    if (response.ok) {
+      user.value.friendListIds = user.value.friendListIds.filter(id => id !== friendId);
+    } else {
+      console.error("Failed to remove friend", response.status);
+    }
+  } catch (error) {
+    console.error("Error removing friend", error);
+  }
+}
+
+
 
 </script>
 

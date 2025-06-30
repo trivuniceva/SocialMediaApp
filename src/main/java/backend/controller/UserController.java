@@ -55,6 +55,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/users/{userId}/remove-friend/{friendId}")
+    public ResponseEntity<?> removeFriend(@PathVariable String userId, @PathVariable String friendId) {
+        return userService.removeFriend(userId, friendId);
+//        return ResponseEntity.ok("Friend removed");
+    }
+
 
 
 }

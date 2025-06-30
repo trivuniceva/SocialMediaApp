@@ -3,6 +3,7 @@ package backend.service;
 import backend.model.User;
 import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,4 +51,17 @@ public class UserService {
         return userFileStorage.findById(id);
     }
 
+    public ResponseEntity<String> removeFriend(String userId, String friendId) {
+        User user = userFileStorage.findById(userId);
+        User friend = userFileStorage.findById(friendId);
+        if (user == null || friend == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+        user.getFriendListIds().remove(friendId);
+        friend.getFriendListIds().remove(userId);
+        userFileStorage.updateUser(user);
+        userFileStorage.updateUser(friend);
+
+        return ResponseEntity.ok("Friend removed");
+    }
 }

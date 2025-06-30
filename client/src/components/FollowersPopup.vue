@@ -12,7 +12,7 @@
         <ul v-if="followers.length">
           <li v-for="(follower, index) in followers" :key="index" class="follower-item">
             <span class="follower-name">{{ follower }}</span>
-            <button class="remove-follower-button">Remove</button>
+            <button class="remove-follower-button" @click="$emit('remove', follower)">Remove</button>
           </li>
         </ul>
         <p v-else class="no-followers-message">No followers yet.</p>
