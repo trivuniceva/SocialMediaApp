@@ -37,16 +37,23 @@
         </div>
 
         <div class="add-comment-section">
-          <input type="text" placeholder="Add a comment..." class="comment-input">
-          <button class="post-comment-btn">Post</button>
+          <div v-if="loggedUser">
+            <input type="text" placeholder="Add a comment..." class="comment-input" v-model="newCommentText" @keyup.enter="postComment">
+            <button class="post-comment-btn" @click="postComment">Post</button>
+          </div>
+          <div v-else>
+            <p class="login-prompt">Log in to leave a comment.</p>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue';
+import { ref, defineProps, defineEmits, watch, computed } from 'vue';
+import { useStore } from 'vuex';
 import axios from 'axios';
 
 const props = defineProps({
@@ -61,10 +68,14 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+const store = useStore();
 
 const comments = ref([]);
+const newCommentText = ref('');
 const uploaderProfilePic = ref('/img/icons/profile-placeholder.png');
 const commenterProfilePics = ref({});
+
+const loggedUser = computed(() => store.state.loggedUser);
 
 const closePopup = () => {
   emit('close');
@@ -99,6 +110,47 @@ const fetchCommentsAndUserData = async (objectId) => {
     comments.value = [];
     uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
     commenterProfilePics.value = {};
+  }
+};
+
+const postComment = async () => {
+  if (newCommentText.value.trim() === '') {
+    return;
+  }
+
+  if (!loggedUser.value) {
+    console.error('Korisnik nije ulogovan. Ne mogu objaviti komentar.');
+    return;
+  }
+
+  const newComment = {
+    objectId: props.image.id,
+    objectType: 'IMAGE',
+    userId: loggedUser.value.id,
+    text: newCommentText.value,
+    commentDate: new Date().toISOString(),
+    editDate: null,
+    logicallyDeleted: false,
+  };
+
+  try {
+    const response = await axios.post('http://localhost:8080/api/comments/add', newComment);
+
+    const addedComment = response.data;
+    comments.value.push({
+      ...addedComment,
+      username: loggedUser.value.username
+    });
+
+    if (!commenterProfilePics.value[addedComment.userId]) {
+      const userResponse = await axios.get(`http://localhost:8080/api/users/${addedComment.userId}`);
+      commenterProfilePics.value[addedComment.userId] = userResponse.data.profilePicturePath;
+    }
+
+    newCommentText.value = '';
+
+  } catch (error) {
+    console.error('Greška pri dodavanju komentara:', error);
   }
 };
 
@@ -152,7 +204,7 @@ const formatUploadDate = (dateString) => {
 
 .image-popup-content {
   background-color: #ffffff;
-  /*border-radius: 20px;*/
+  border-radius: 20px;
   max-width: 90%;
   width: 1200px;
   height: 95vh;
@@ -175,6 +227,7 @@ const formatUploadDate = (dateString) => {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -196,10 +249,12 @@ const formatUploadDate = (dateString) => {
   padding: 5px;
   border-radius: 50%;
   transition: background-color 0.2s ease;
+  z-index: 1; /* Povećaj z-index da bude iznad svega */
+  font-size: 1.2em; /* Povećaj veličinu X */
 }
 
 .close-popup-btn:hover {
-  color: #2c3e50;
+  color: #f86b86; /* Promeni boju X na hover */
 }
 
 .post-header {
@@ -340,6 +395,14 @@ const formatUploadDate = (dateString) => {
 .post-comment-btn:hover {
   background-color: #e05a73;
   transform: translateY(-1px);
+}
+
+.login-prompt {
+  width: 100%;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin: 10px 0;
 }
 
 .comments-section::-webkit-scrollbar {
