@@ -98,6 +98,7 @@ const fetchCommentsAndUserData = async (objectId) => {
     console.error('Greška pri učitavanju podataka:', error);
     comments.value = [];
     uploaderProfilePic.value = '/img/icons/profile-placeholder.png';
+    commenterProfilePics.value = {};
   }
 };
 
@@ -151,10 +152,10 @@ const formatUploadDate = (dateString) => {
 
 .image-popup-content {
   background-color: #ffffff;
-  border-radius: 20px;
+  /*border-radius: 20px;*/
   max-width: 90%;
   width: 1200px;
-  height: 80vh;
+  height: 95vh;
   display: flex;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -174,7 +175,6 @@ const formatUploadDate = (dateString) => {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 15px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
