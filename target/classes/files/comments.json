@@ -151,4 +151,13 @@
   "commentDate" : [ 2025, 6, 30, 22, 29, 49, 250000000 ],
   "editDate" : null,
   "logicallyDeleted" : true
+}, {
+  "id" : "340d070d-d4c4-47c9-bcda-dbd0fefb20ea",
+  "objectId" : "3504b742-f89c-4a89-9824-26d6ace1f3ba",
+  "objectType" : "IMAGE",
+  "userId" : "user_2",
+  "text" : "bas je dobro",
+  "commentDate" : [ 2025, 6, 30, 23, 32, 46, 450000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
 } ]
