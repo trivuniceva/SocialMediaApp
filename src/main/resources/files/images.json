@@ -3,7 +3,7 @@
   "userId" : "user_1",
   "path" : "/images/user_uploads/image_1.jpg",
   "text" : "Mountain view, breathtaking!",
-  "commentIds" : [ "comment_1", "comment_2" ],
+  "commentIds" : [ "comment_1", "comment_2", "312fa61e-0c2f-4072-9f40-3c0a7e078684" ],
   "uploadDate" : "2024-06-24T12:00:00",
   "logicallyDeleted" : false
 }, {
@@ -152,7 +152,7 @@
   "logicallyDeleted" : false
 }, {
   "id" : "image_20",
-  "userId" : "user_3",
+  "userId" : "user_4",
   "path" : "/images/user_uploads/image_20.jpg",
   "text" : "Evening bike ride through the park.",
   "commentIds" : [ ],
@@ -160,7 +160,7 @@
   "logicallyDeleted" : false
 }, {
   "id" : "image_21",
-  "userId" : "user_3",
+  "userId" : "user_4",
   "path" : "/images/user_uploads/image_21.jpg",
   "text" : "Evening bike ride through the park.",
   "commentIds" : [ ],
@@ -168,7 +168,7 @@
   "logicallyDeleted" : false
 }, {
   "id" : "image_22",
-  "userId" : "user_3",
+  "userId" : "user_4",
   "path" : "/images/user_uploads/image_22.jpg",
   "text" : "Evening bike ride through the park.",
   "commentIds" : [ ],
@@ -179,7 +179,7 @@
   "userId" : "user_4",
   "path" : "/images/user_uploads/test1.jpg",
   "text" : "Opis",
-  "commentIds" : [ ],
+  "commentIds" : [ "340d070d-d4c4-47c9-bcda-dbd0fefb20ea" ],
   "uploadDate" : "2025-07-01T01:09:06.225562",
   "logicallyDeleted" : false
 }, {
