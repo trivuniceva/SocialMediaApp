@@ -2,12 +2,9 @@ package backend.controller;
 
 import backend.model.Post;
 import backend.service.PostService;
-import backend.storage.PostFileStorage;
-import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

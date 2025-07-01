@@ -160,4 +160,13 @@
   "commentDate" : [ 2025, 6, 30, 23, 32, 46, 450000000 ],
   "editDate" : null,
   "logicallyDeleted" : false
+}, {
+  "id" : "312fa61e-0c2f-4072-9f40-3c0a7e078684",
+  "objectId" : "image_1",
+  "objectType" : "IMAGE",
+  "userId" : "user_1",
+  "text" : "<3",
+  "commentDate" : [ 2025, 7, 1, 9, 31, 9, 80000000 ],
+  "editDate" : null,
+  "logicallyDeleted" : false
 } ]

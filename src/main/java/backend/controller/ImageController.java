@@ -1,18 +1,11 @@
 package backend.controller;
 
 import backend.model.Image;
-import backend.model.User;
 import backend.service.ImageService;
-import backend.storage.CommentFileStorage;
-import backend.storage.ImageFileStorage;
-import backend.storage.UserFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/images")

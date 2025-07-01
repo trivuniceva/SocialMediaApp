@@ -5,6 +5,7 @@ import backend.model.User;
 import backend.storage.CommentFileStorage;
 import backend.storage.ImageFileStorage;
 import backend.storage.UserFileStorage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,12 @@ import java.util.UUID;
 @Service
 public class ImageService {
 
+    @Autowired
     private ImageFileStorage imageFileStorage;
+    @Autowired
     private CommentFileStorage commentFileStorage;
+    @Autowired
     private UserFileStorage userFileStorage;
-
 
     public List<Image> getImagesByUser(String userId) {
         var user = userFileStorage.findById(userId);
